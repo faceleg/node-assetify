@@ -2,7 +2,7 @@ var extend = require('xtend'),
     disk = require('./disk.js'),
     defaults = {
         development: process.env.NODE_ENV === 'development',
-        appendTo: 'global',
+        appendTo: global,
         js: [],
         in: '/static',
         out: '/static/out'
@@ -29,11 +29,23 @@ function output(paths){
     var targets = [];
     paths.forEach(function(path){
         var target = config.output + path;
-        // TODO: fix path? create subdirectories.
         disk.copy(config.input + path, target);
         targets.push(target);
     });
     return targets;
+}
+
+function scriptTags(paths){
+    var tags = [];
+    paths.forEach(function(path){
+        var tag = '<script src="' + path + '"></script>';
+        tags.push(target);
+    });
+    return tags.join('');
+}
+
+function expose(key, value){
+    config.appendTo[key] = value;
 }
 
 var api = {
@@ -41,6 +53,9 @@ var api = {
         configure(opts);
 
         var js = output(config.js);
+        var jsTags = scriptTags(js);
+
+        expose('js', jsTags);
     }
 };
 
