@@ -2,6 +2,7 @@ var extend = require('xtend'),
     fs = require('fs'),
     fse = require('fs-extra'),
     path = require('path'),
+    async = require('async'),
     disk = require('./disk.js'),
     defaults = {
         development: process.env.NODE_ENV === 'development',
@@ -27,11 +28,15 @@ function configure(opts){
     if(config.source === config.bin){
         throw new Error("opts.source can't be the same as opts.bin");
     }
+
+    config.concat = !config.development; // no reason this should be overwritable.
 }
 
-function output(items, cb){
+function normalizeAndCopyOver(items, cb, extension){
     fse.remove(config.bin, function(){
-        var targets = [];
+        var tasks = [],
+            sources = [],
+            targets = [];
 
         items.forEach(function(item){
             var complex = typeof item === 'object',
@@ -39,16 +44,80 @@ function output(items, cb){
                     local: item
                 };
 
-            targets.push(normalized);
+            sources.push(normalized);
 
             if(normalized.local !== undefined){ // local might not exist.
-                target = path.join(config.bin, normalized.local);
-                disk.copySafe(path.join(config.source, normalized.local), target);
+                var source = source = path.join(config.source, normalized.local);
+
+                if(config.concat === true){
+                    if(config.ext === undefined){
+                        tasks.push(function(callback){
+                            fs.readFile(source, function(err, data){
+                                if(err){
+                                    throw err;
+                                }
+                                normalized.src = data;
+                                callback(err, normalized);
+                            });
+                        });
+                    }else{
+                        targets.push(normalized);
+                    }
+                }else{
+                    var target = path.join(config.bin, normalized.local);
+                    tasks.push(function(callback){
+                        disk.copySafe(source, target, callback);
+                    });
+                }
+            }else{
+                targets.push(normalized);
             }
         });
 
-        cb(targets);
+        async.parallel(tasks, function(err, results){
+            if(err){
+                throw err;
+            }
+            if(config.concat === true){
+                var profiles = profileNamesDistinct(sources);
+                async.forEach(profiles, function(profile, callback){
+                    var concat = [];
+                    sources.forEach(function(target){
+                        if(target.profile === undefined || target.profile === profile){
+                            concat.push(target.src);
+                        }
+                    });
+                    var bundle = path.join(config.bin, (profile || 'all') + '.' + extension);
+                    var code = concat.join('\n');
+                    targets.push({
+                        profile: profile,
+                        local: bundle
+                    });
+                    disk.write(bundle, code, callback);
+                }, function(err){
+                    if(err){
+                        throw err;
+                    }
+                    cb(targets);
+                });
+            }else{
+                cb(sources);
+            }
+        });
     });
+}
+
+function profileNamesDistinct(sources){
+    var names = [undefined];
+    sources.forEach(function(target){
+        if(!(target.profile in names)){
+            names.push(target.profile);
+        }
+    });
+    if(names.length > 1){ // if using profiles, don't save a common profile.
+        return names.slice(1);
+    }
+    return names;
 }
 
 function profile(tags){
@@ -114,21 +183,20 @@ function expose(key, value){
     config.appendTo[key] = value;
 }
 
+function process(sources, tag, key){
+    normalizeAndCopyOver(sources, function(results){
+        var tags = tag(results);
+
+        expose(key, tags);
+    }, key);
+}
+
 var api = {
     publish: function(opts){
         configure(opts);
 
-        output(config.js, function(js){
-            var jsTags = scriptTags(js);
-
-            expose('js', jsTags);
-        });
-
-        output(config.css, function(css){
-            var cssTags = styleTags(css);
-
-            expose('css', cssTags);
-        });
+        process(config.js, scriptTags, 'js');
+        process(config.css, styleTags, 'css');
 
         return config.bin;
     },
