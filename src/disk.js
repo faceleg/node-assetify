@@ -1,7 +1,14 @@
-var fs = require('fs');
+var fs = require('fs'),
+    path = require('path'),
+    mkdirp = require('mkdirp');
 
 function copy(source,target){
-    fs.createReadStream(source).pipe(fs.createWriteStream(target));
+    var file = path.normalize(target);
+    var dir = path.dirname(file);
+
+    mkdirp(dir,function(){
+        fs.createReadStream(source).pipe(fs.createWriteStream(file));
+    });
 }
 
 var api = {

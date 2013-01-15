@@ -1,5 +1,4 @@
 # node-assetify [![Build Status](https://travis-ci.org/bevacqua/node-assetify.png?branch=master)](https://travis-ci.org/bevacqua/node-assetify)
-========================================================================================================================
 
 **node-assetify** is an open-source client-side asset manager for **Node.JS** web applications.
 
