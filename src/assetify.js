@@ -33,9 +33,19 @@ function configure(opts){
     config.minify = config.production === true; // no reason this should be overwritable.
 }
 
-function prepareConcatTasks(tasks, source, item){
-    if(config.ext === undefined){
-        tasks.push(function(callback){
+function readFilesAsync(items, cb){
+    async.forEach(items, function(item, callback){
+        var complex = typeof item === 'object',
+            normalized = complex ? item : {
+                local: item
+            };
+
+        var i = items.indexOf(item);
+        items[i] = normalized;
+
+        if(normalized.local !== undefined){ // local might not exist.
+            var source = path.join(config.source, normalized.local);
+
             fs.readFile(source, function(err, data){
                 if(err){
                     throw err;
@@ -43,35 +53,42 @@ function prepareConcatTasks(tasks, source, item){
                 item.src = data;
                 callback(err);
             });
-        });
-    }else{
-        targets.push(normalized);
-    }
+        }
+    }, cb);
 }
 
-function prepareCopyTasks(items, sources, targets, tasks){
-    items.forEach(function(item){
-        var complex = typeof item === 'object',
-            normalized = complex ? item : {
-                local: item
-            };
+function bundleAsync(items, cb){
+    var profiles = profileNamesDistinct(sources),
+        bundles = [];
 
-        sources.push(normalized);
+    async.forEach(profiles, function(profile, callback){
+        var bundle = {
+            profile: profile,
+            items: [],
+            sources: [],
+            external: []
+        };
 
-        if(normalized.local !== undefined){ // local might not exist.
-            var source = source = path.join(config.source, normalized.local);
+        items.forEach(function(item){
+           if(item.profile === undefined || item.profile === profile){
+               if(item.ext === undefined){
+                   if(item.src === undefined){
+                       throw new Error('item has no source nor is an external resource');
+                   }
+                   bundle.sources.push(item);
+               }else{
+                   bundle.external.push(item);
+               }
+           }
+        });
 
-            if(config.concat === true){
-                prepareConcatTasks(tasks,source,normalized);
-            }else{
-                var target = path.join(config.bin, normalized.local);
-                tasks.push(function(callback){
-                    disk.copySafe(source, target, callback);
-                });
-            }
-        }else{
-            targets.push(normalized);
+        bundles.push(bundle);
+        callback();
+    }, function(err){
+        if(err){
+            throw err;
         }
+        cb(null, bundles);
     });
 }
 
@@ -118,16 +135,32 @@ function endCopyTasks(err, sources, targets, extension, cb){
     }
 }
 
+function concatenateAsync(bundles){
+    var physical = [];
+    async.forEach(bundles, function(bundle, callback){
+        if(bundle.external.length){
+            physical.push(bundle); // pass-through
+        }else{
+
+        }
+    });
+}
+
 function normalizeAndCopyOver(items, cb, extension){
     fse.remove(config.bin, function(){
-        var tasks = [],
-            sources = [],
-            targets = [];
-
-        prepareCopyTasks(items, sources, targets, tasks);
-
-        async.parallel(tasks, function(err){
-            endCopyTasks(err, sources, targets, extension, cb);
+        readFilesAsync(items, function(err){
+            if(err){
+                throw err;
+            }
+            bundleAsync(items, function(err, bundles){
+                if(err){
+                    throw err;
+                }
+                concatenateAsync(bundles);
+            });
+            async.parallel(tasks, function(err){
+                endCopyTasks(err, sources, targets, extension, cb);
+            });
         });
     });
 }
