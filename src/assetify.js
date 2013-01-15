@@ -30,6 +30,88 @@ function configure(opts){
     }
 
     config.concat = config.production === true; // no reason this should be overwritable.
+    config.minify = config.production === true; // no reason this should be overwritable.
+}
+
+function prepareConcatTasks(tasks, source, item){
+    if(config.ext === undefined){
+        tasks.push(function(callback){
+            fs.readFile(source, function(err, data){
+                if(err){
+                    throw err;
+                }
+                item.src = data;
+                callback(err);
+            });
+        });
+    }else{
+        targets.push(normalized);
+    }
+}
+
+function prepareCopyTasks(items, sources, targets, tasks){
+    items.forEach(function(item){
+        var complex = typeof item === 'object',
+            normalized = complex ? item : {
+                local: item
+            };
+
+        sources.push(normalized);
+
+        if(normalized.local !== undefined){ // local might not exist.
+            var source = source = path.join(config.source, normalized.local);
+
+            if(config.concat === true){
+                prepareConcatTasks(tasks,source,normalized);
+            }else{
+                var target = path.join(config.bin, normalized.local);
+                tasks.push(function(callback){
+                    disk.copySafe(source, target, callback);
+                });
+            }
+        }else{
+            targets.push(normalized);
+        }
+    });
+}
+
+function endCopyTasks(err, sources, targets, extension, cb){
+    if(err){
+        throw err;
+    }
+    if(config.concat === true){
+        var profiles = profileNamesDistinct(sources);
+        async.forEach(profiles, function(profile, callback){
+            var concat = [];
+            sources.forEach(function(target){
+                if(target.profile === undefined || target.profile === profile){
+                    if(target.ext === undefined){
+                        concat.push(target.src);
+                    }else{
+                        if (targets.indexOf(target) === -1){ // sanity for sources without explicit profile.
+                            targets.push(target);
+                        }
+                    }
+                }
+            });
+            var profileName = (profile || 'all') + '.' + extension,
+                bundle = path.join(config.bin, profileName),
+                code = concat.join('\n');
+
+            targets.push({
+                profile: profile,
+                local: profileName
+            });
+            disk.write(bundle, code, callback);
+        }, function(err){
+            if(err){
+                throw err;
+            }
+            cb(targets);
+        });
+    }else{
+        cb(sources);
+    }
 }
 
 function normalizeAndCopyOver(items, cb, extension){
@@ -38,73 +120,10 @@ function normalizeAndCopyOver(items, cb, extension){
             sources = [],
             targets = [];
 
-        items.forEach(function(item){
-            var complex = typeof item === 'object',
-                normalized = complex ? item : {
-                    local: item
-                };
+        prepareCopyTasks(items, sources, targets, tasks);
 
-            sources.push(normalized);
-
-            if(normalized.local !== undefined){ // local might not exist.
-                var source = source = path.join(config.source, normalized.local);
-
-                if(config.concat === true){
-                    if(config.ext === undefined){
-                        tasks.push(function(callback){
-                            fs.readFile(source, function(err, data){
-                                if(err){
-                                    throw err;
-                                }
-                                normalized.src = data;
-                                callback(err, normalized);
-                            });
-                        });
-                    }else{
-                        targets.push(normalized);
-                    }
-                }else{
-                    var target = path.join(config.bin, normalized.local);
-                    tasks.push(function(callback){
-                        disk.copySafe(source, target, callback);
-                    });
-                }
-            }else{
-                targets.push(normalized);
-            }
-        });
-
-        async.parallel(tasks, function(err, results){
-            if(err){
-                throw err;
-            }
-            if(config.concat === true){
-                var profiles = profileNamesDistinct(sources);
-                async.forEach(profiles, function(profile, callback){
-                    var concat = [];
-                    sources.forEach(function(target){
-                        if(target.profile === undefined || target.profile === profile){
-                            concat.push(target.src);
-                        }
-                    });
-                    var profileName = (profile || 'all') + '.' + extension,
-                        bundle = path.join(config.bin, profileName),
-                        code = concat.join('\n');
-
-                    targets.push({
-                        profile: profile,
-                        local: profileName
-                    });
-                    disk.write(bundle, code, callback);
-                }, function(err){
-                    if(err){
-                        throw err;
-                    }
-                    cb(targets);
-                });
-            }else{
-                cb(sources);
-            }
+        async.parallel(tasks, function(err){
+            endCopyTasks(err, sources, targets, extension, cb);
         });
     });
 }

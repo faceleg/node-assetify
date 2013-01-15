@@ -1,6 +1,5 @@
 TODO:
 
 - process input files (less, sass, coffee)
-- concatenate files for each different profile (production, configurable, defaults)
 - minify output js / css (production)
 - hash concatenated output files like /all.js?_=1239123 for improved caching experience
