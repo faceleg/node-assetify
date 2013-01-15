@@ -17,19 +17,19 @@ function configure(opts){
 
     config = extend(defaults, opts);
 
-    if(config.in === undefined){
-        throw new Error("opts.in must be defined as the folder where your assets are");
+    if(config.source === undefined){
+        throw new Error("opts.source must be defined as the folder where your assets are");
     }
-    if(config.out === undefined){
-        throw new Error("opts.out must be defined as the folder where processed assets will be stored");
+    if(config.bin === undefined){
+        throw new Error("opts.bin must be defined as the folder where processed assets will be stored");
     }
-    if(config.in === config.out){
-        throw new Error("opts.in can't be the same as opts.out");
+    if(config.source === config.bin){
+        throw new Error("opts.source can't be the same as opts.bin");
     }
 }
 
 function output(items, cb){
-    fse.remove(config.out, function(){
+    fse.remove(config.bin, function(){
         var targets = [];
 
         items.forEach(function(item){
@@ -41,8 +41,8 @@ function output(items, cb){
             targets.push(normalized);
 
             if(normalized.local !== undefined){ // local might not exist.
-                target = path.join(config.out, normalized.local);
-                disk.copySafe(path.join(config.in, normalized.local), target);
+                target = path.join(config.bin, normalized.local);
+                disk.copySafe(path.join(config.source, normalized.local), target);
             }
         });
 
@@ -129,7 +129,7 @@ var api = {
             expose('css', cssTags);
         });
 
-        return config.out;
+        return config.bin;
     },
     jQuery: function(version, local){
         return {
