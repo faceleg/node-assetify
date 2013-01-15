@@ -15,7 +15,10 @@ Server-side:
     var assets = assetify.publish({
         in: __dirname + '/static',
         out: __dirname + '/static/out'
-        js: ['/js/file.js'],
+        js: [
+            '/js/file.js',
+            { profile: 'mystical', local: '/js/admin.js' }
+        ],
         appendTo: app.locals
     });
 
@@ -23,4 +26,12 @@ Server-side:
 
 Client-side:
 
-    !=js
+    !=js()
+
+You could also pass a profile to the client-side function:
+
+    !=js('mystical')
+
+If you don't want to include profile-less scripts, you can do:
+
+    !=js('mystical', false)
