@@ -110,7 +110,7 @@ function normalizeAndCopyOver(items, cb, extension){
 function profileNamesDistinct(sources){
     var names = [undefined];
     sources.forEach(function(target){
-        if(!(target.profile in names)){
+        if (names.indexOf(target.profile) === -1){
             names.push(target.profile);
         }
     });

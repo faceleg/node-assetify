@@ -14,8 +14,16 @@ function copy(source, target, cb){
     });
 }
 
-function write(target, data, cb){
-    fs.writeFile(filename, data, cb);
+function write(filename, data, cb){
+    var file = path.normalize(filename);
+    var dir = path.dirname(file);
+
+    fse.mkdirs(dir,function(err){
+        if(err){
+            throw err;
+        }
+        fs.writeFile(filename, data, cb);
+    });
 }
 
 var api = {
