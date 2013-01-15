@@ -1,0 +1,7 @@
+TODO:
+
+plugins for
+-------
+- process input files (less, sass, coffee)
+- concatenate files for each different profile (production, configurable, defaults)
+- minify output js / css (production)
