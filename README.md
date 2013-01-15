@@ -12,9 +12,9 @@ Installation:
 
 Server-side:
 
-    var assets = assetify.publish({
-        in: __dirname + '/static',
-        out: __dirname + '/static/out'
+    var bin = assetify.publish({
+        source: __dirname + '/static',
+        bin: __dirname + '/static/bin'
         js: [
             '/js/file.js',
             { profile: 'mystical', local: '/js/admin.js' }
@@ -22,7 +22,7 @@ Server-side:
         appendTo: app.locals
     });
 
-    app.use(connect.static(assets)); // assets == opts.out
+    app.use(connect.static(bin)); // bin == opts.bin
 
 Client-side:
 
