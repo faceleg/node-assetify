@@ -90,6 +90,10 @@ function endCopyTasks(err, sources, targets, extension, cb){
                     }else{
                         if (targets.indexOf(target) === -1){ // sanity for sources without explicit profile.
                             targets.push(target);
+
+                            var source = path.join(config.source, target.local);
+                            var local = path.join(config.bin, target.local);
+                            disk.copySafe(source, local);
                         }
                     }
                 }
