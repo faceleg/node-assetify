@@ -6,7 +6,8 @@ var extend = require('xtend'),
     defaults = {
         development: process.env.NODE_ENV === 'development',
         appendTo: global,
-        js: []
+        js: [],
+        css: []
     },
     config; // module configuration options
 
