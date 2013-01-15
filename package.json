@@ -1,7 +1,10 @@
 {
   "name": "node-assetify",
-  "description": "Node asset manager tool",
-  "author": "Nicolas Bevacqua <nicolasbevacqua@gmail.com>",
+  "description": "Node client-side asset manager tool",
+  "author": {
+    "name": "Nicolas Bevacqua",
+    "email": "nicolasbevacqua@gmail.com"
+  },
   "version": "0.0.1",
   "dependencies": {
   },
@@ -10,8 +13,19 @@
 	"mocha": "*",
 	"should": "*"
   },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bevacqua/node-assetify.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bevacqua/node-assetify/issues"
+  },
+  "licenses": [{
+    "type": "MIT"
+  }],
+  "main": "./src/assetify.js",
   "engines": {
-    "node": "0.8.x",
+    "node": ">= 0.8.x",
 	"npm": "1.1.x"
   }
 }
