@@ -5,7 +5,7 @@ var extend = require('xtend'),
         appendTo: 'global',
         js: [],
         in: '/static',
-        out: '/assets'
+        out: '/static/out'
     },
     config; // module configuration options
 
@@ -16,6 +16,9 @@ function configure(opts){
     if(opts.base === undefined){
         throw new Error('opts.base is required. e.g: __dirname');
     }
+    if(opts.in === opts.out){
+        throw new Error("opts.in can't be the same as opts.out");
+    }
 
     config = extend(defaults, opts);
     config.input = config.base + config.in;
@@ -23,16 +26,21 @@ function configure(opts){
 }
 
 function output(paths){
+    var targets = [];
     paths.forEach(function(path){
-        disk.copy(config.input + path, config.output + path);
+        var target = config.output + path;
+        // TODO: fix path? create subdirectories.
+        disk.copy(config.input + path, target);
+        targets.push(target);
     });
+    return targets;
 }
 
 var api = {
     publish: function(opts){
         configure(opts);
 
-        output(config.js);
+        var js = output(config.js);
     }
 };
 

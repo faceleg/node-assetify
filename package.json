@@ -7,8 +7,7 @@
   },
   "version": "0.0.1",
   "dependencies": {
-      "xtend": "1.0.3",
-      "walk": "2.2.1"
+      "xtend": "1.0.3"
   },
   "devDependencies": {
     "vows": "0.5.x",
