@@ -35,3 +35,7 @@ You could also pass a profile to the client-side function:
 If you don't want to include profile-less scripts, you can do:
 
     !=js('mystical', false)
+
+There are some built-in facilities to speed up your development, for instance, you can add jQuery's CDN version with a local fallback like this:
+
+    assetify.jQuery('1.8.3', '/js/jquery-1.8.3.min.js')
