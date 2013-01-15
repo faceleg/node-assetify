@@ -4,9 +4,11 @@
 
 ## Why node-assetify?
 
-When I started developing on **Node.JS**, I didn't feel comfortable enough with any client-side asset manager, so I decided to roll my own. This is the result of that endeavor.
+When I started developing on **Node.JS**, I didn't feel comfortable enough with any client-side asset manager, so I decided to roll my own.
 
-Installation:
+## Setup
+
+Fetch from **npm**
 
     npm install node-assetify
 
@@ -24,11 +26,11 @@ Server-side:
 
     app.use(connect.static(bin)); // bin == opts.bin
 
-Client-side:
+Client-side **jade** template code:
 
     !=js()
 
-You could also pass a profile to the client-side function:
+You could also pass a _profile name_ to the client-side function:
 
     !=js('mystical')
 
