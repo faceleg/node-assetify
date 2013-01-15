@@ -5,7 +5,7 @@ var extend = require('xtend'),
     async = require('async'),
     disk = require('./disk.js'),
     defaults = {
-        development: process.env.NODE_ENV === 'development',
+        production: false,
         appendTo: global,
         js: [],
         css: []
@@ -29,7 +29,7 @@ function configure(opts){
         throw new Error("opts.source can't be the same as opts.bin");
     }
 
-    config.concat = !config.development; // no reason this should be overwritable.
+    config.concat = config.production === true; // no reason this should be overwritable.
 }
 
 function normalizeAndCopyOver(items, cb, extension){
