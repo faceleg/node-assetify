@@ -1,0 +1,17 @@
+{
+  "name": "node-assetify",
+  "description": "Node asset manager tool",
+  "author": "Nicolas Bevacqua <nicolasbevacqua@gmail.com>",
+  "version": "0.0.1",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "vows": "0.5.x",
+	"mocha": "*",
+	"should": "*"
+  },
+  "engines": {
+    "node": "0.8.x",
+	"npm": "1.1.x"
+  }
+}
