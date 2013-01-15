@@ -73,7 +73,7 @@ function scriptTags(targets){
         var tag = '<script src="' + source + '"></script>';
         tags.push({ html: tag, profile: target.profile });
 
-        if(complex && target.local !== undefined){
+        if(complex && target.ext !== undefined && target.local !== undefined){
             if(target.test === undefined){
                 throw new Error('fallback test is missing');
             }
