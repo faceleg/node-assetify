@@ -1,18 +1,18 @@
 var fs = require('fs'),
-    path = require('path'),
-    mkdirp = require('mkdirp');
+    fse = require('fs-extra'),
+    path = require('path');
 
-function copy(source,target){
+function copy(source, target, cb){
     var file = path.normalize(target);
     var dir = path.dirname(file);
 
-    mkdirp(dir,function(){
-        fs.createReadStream(source).pipe(fs.createWriteStream(file));
+    fse.mkdirs(dir,function(){
+        fse.copy(source, file, cb);
     });
 }
 
 var api = {
-    copy: copy
+    copySafe: copy
 };
 
 

@@ -1,11 +1,12 @@
 var extend = require('xtend'),
+    fs = require('fs'),
+    fse = require('fs-extra'),
+    path = require('path'),
     disk = require('./disk.js'),
     defaults = {
         development: process.env.NODE_ENV === 'development',
         appendTo: global,
-        js: [],
-        in: '/static',
-        out: '/static/out'
+        js: []
     },
     config; // module configuration options
 
@@ -13,35 +14,76 @@ function configure(opts){
     if(config !== undefined){
         throw new Error('assetify can only be configured once.');
     }
-    if(opts.base === undefined){
-        throw new Error('opts.base is required. e.g: __dirname');
-    }
-    if(opts.in === opts.out){
-        throw new Error("opts.in can't be the same as opts.out");
-    }
 
     config = extend(defaults, opts);
-    config.input = config.base + config.in;
-    config.output = config.base + config.out;
+
+    if(config.in === undefined){
+        throw new Error("opts.in must be defined as the folder where your assets are");
+    }
+    if(config.out === undefined){
+        throw new Error("opts.out must be defined as the folder where processed assets will be stored");
+    }
+    if(config.in === config.out){
+        throw new Error("opts.in can't be the same as opts.out");
+    }
 }
 
-function output(paths){
-    var targets = [];
-    paths.forEach(function(path){
-        var target = config.output + path;
-        disk.copy(config.input + path, target);
-        targets.push(target);
+function output(items, cb){
+    fse.remove(config.out, function(){
+        var targets = [];
+
+        items.forEach(function(item){
+            var complex = typeof item === 'object',
+                source = complex ? item.local : item;
+
+            targets.push(item);
+
+            if(source !== undefined){ // local might not exist.
+                target = path.join(config.out, source);
+                disk.copySafe(path.join(config.in, source), target);
+            }
+        });
+
+        cb(targets);
     });
-    return targets;
 }
 
-function scriptTags(paths){
+function profile(tags){
+    return function(key, includeCommon){
+        var results = [];
+        tags.forEach(function(tag){
+            if((tag.profile === undefined && includeCommon !== false) || tag.profile === key){
+                results.push(tag.html);
+            }
+        });
+        return results.join('');
+    };
+}
+
+function scriptTags(targets){
     var tags = [];
-    paths.forEach(function(path){
-        var tag = '<script src="' + path + '"></script>';
-        tags.push(target);
+    targets.forEach(function(target){
+        var complex = typeof target === 'object',
+            source = complex ? target.ext : target;
+
+        if(!complex && source.indexOf('/') !== 0){
+            source = '/' + source;
+        }
+
+        var tag = '<script src="' + source + '"></script>';
+        tags.push({ html: tag, profile: target.profile });
+
+        if(complex && target.local !== undefined){
+            if(target.test === undefined){
+                throw new Error('fallback test is missing');
+            }
+            var code = target.test + ' || document.write(unescape("%3Cscript src=\'' + target.local + '\'%3E%3C/script%3E"))';
+            var fallback = '<script>' + code +  '</script>';
+            tags.push({ html: fallback, profile: target.profile });
+        }
     });
-    return tags.join('');
+
+    return profile(tags);
 }
 
 function expose(key, value){
@@ -52,10 +94,20 @@ var api = {
     publish: function(opts){
         configure(opts);
 
-        var js = output(config.js);
-        var jsTags = scriptTags(js);
+        output(config.js, function(js){
+            var jsTags = scriptTags(js);
 
-        expose('js', jsTags);
+            expose('js', jsTags);
+        });
+
+        return config.out;
+    },
+    jQuery: function(version, local){
+        return {
+            ext: '//ajax.googleapis.com/ajax/libs/jquery/' + version + '/jquery.min.js',
+            local: local,
+            test: 'window.jQuery'
+        }
     }
 };
 

@@ -8,7 +8,7 @@
   "version": "0.0.1",
   "dependencies": {
       "xtend": "1.0.3",
-      "mkdirp": "0.3.4"
+      "fs-extra": "0.3.2"
   },
   "devDependencies": {
     "vows": "0.5.x",
@@ -28,6 +28,6 @@
   "main": "./src/assetify.js",
   "engines": {
     "node": ">= 0.8.x",
-	"npm": "1.1.x"
+	"npm": ">= 1.1.x"
   }
 }

@@ -9,3 +9,18 @@ When I started developing on **Node.JS**, I didn't feel comfortable enough with 
 Installation:
 
     npm install node-assetify
+
+Server-side:
+
+    var assets = assetify.publish({
+        in: __dirname + '/static',
+        out: __dirname + '/static/out'
+        js: ['/js/file.js'],
+        appendTo: app.locals
+    });
+
+    app.use(connect.static(assets)); // assets == opts.out
+
+Client-side:
+
+    !=js
