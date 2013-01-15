@@ -87,11 +87,13 @@ function normalizeAndCopyOver(items, cb, extension){
                             concat.push(target.src);
                         }
                     });
-                    var bundle = path.join(config.bin, (profile || 'all') + '.' + extension);
-                    var code = concat.join('\n');
+                    var profileName = (profile || 'all') + '.' + extension,
+                        bundle = path.join(config.bin, profileName),
+                        code = concat.join('\n');
+
                     targets.push({
                         profile: profile,
-                        local: bundle
+                        local: profileName
                     });
                     disk.write(bundle, code, callback);
                 }, function(err){
