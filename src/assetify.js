@@ -62,20 +62,28 @@ function profile(tags){
     };
 }
 
-function scriptTags(targets){
+function renderTags(targets, opts){
     var tags = [];
     targets.forEach(function(target){
         var external = target.ext !== undefined,
-            source = external ? target.ext : target.local;
+            href = external ? target.ext : target.local;
 
-        if(!external && source.indexOf('/') !== 0){
-            source = '/' + source;
+        if(!external && href.indexOf('/') !== 0){
+            href = '/' + href;
         }
 
-        var tag = '<script src="' + source + '"></script>';
+        var tag = opts.render(href);
         tags.push({ html: tag, profile: target.profile });
 
-        if(external && target.local !== undefined){
+        (opts.then || function(){})(target, tags);
+    });
+
+    return profile(tags);
+}
+
+function scriptTags(targets){
+    function then(target, tags){
+        if(target.ext !== undefined && target.local !== undefined){
             if(target.test === undefined){
                 throw new Error('fallback test is missing');
             }
@@ -83,9 +91,22 @@ function scriptTags(targets){
             var fallback = '<script>' + code +  '</script>';
             tags.push({ html: fallback, profile: target.profile });
         }
-    });
+    }
 
-    return profile(tags);
+    return renderTags(targets, {
+        render: function(href){
+            return '<script src="' + href + '"></script>'
+        },
+        then: then
+    });
+}
+
+function styleTags(targets){
+    return renderTags(targets, {
+        render: function(href){
+            return '<link rel="stylesheet" href="' + href + '">';
+        }
+    })
 }
 
 function expose(key, value){
@@ -100,6 +121,12 @@ var api = {
             var jsTags = scriptTags(js);
 
             expose('js', jsTags);
+        });
+
+        output(config.css, function(css){
+            var cssTags = styleTags(css);
+
+            expose('css', cssTags);
         });
 
         return config.out;
