@@ -34,13 +34,15 @@ function output(items, cb){
 
         items.forEach(function(item){
             var complex = typeof item === 'object',
-                source = complex ? item.local : item;
+                normalized = complex ? item : {
+                    local: item
+                };
 
-            targets.push(item);
+            targets.push(normalized);
 
-            if(source !== undefined){ // local might not exist.
-                target = path.join(config.out, source);
-                disk.copySafe(path.join(config.in, source), target);
+            if(normalized.local !== undefined){ // local might not exist.
+                target = path.join(config.out, normalized.local);
+                disk.copySafe(path.join(config.in, normalized.local), target);
             }
         });
 
@@ -63,17 +65,17 @@ function profile(tags){
 function scriptTags(targets){
     var tags = [];
     targets.forEach(function(target){
-        var complex = typeof target === 'object',
-            source = complex ? target.ext : target;
+        var external = target.ext !== undefined,
+            source = external ? target.ext : target.local;
 
-        if(!complex && source.indexOf('/') !== 0){
+        if(!external && source.indexOf('/') !== 0){
             source = '/' + source;
         }
 
         var tag = '<script src="' + source + '"></script>';
         tags.push({ html: tag, profile: target.profile });
 
-        if(complex && target.ext !== undefined && target.local !== undefined){
+        if(external && target.local !== undefined){
             if(target.test === undefined){
                 throw new Error('fallback test is missing');
             }
