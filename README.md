@@ -128,4 +128,36 @@ Here is an example configuration module, extracted from [**NBrut**](https://gith
 
 ## Plugins
 
-TODO
+You can hook into node-assetify through plugins. There are a few events that are raised during the assetify process.
+
+- **afterReadFile**: Raised after, you guessed it, all files have been read from disk into memory. Useful for _pre-processing_ like **LESS** parsing.
+- **afterBundle**: Raised after files are bundled together into profiles. Useful for _minification_.
+- **afterOutput**: Raised after files are copied to the final destinations. Useful for _post-processing_, like licensing comments.
+
+To configure a plugin, you must add it **before** calling `assetify.compile`. These can be added in two ways. The simpler way is:
+
+```javascript
+    assetify.use(key,eventName,plugin)
+```
+
+Another option is using an _object initializer_:
+
+```javascript
+    assetify.use({
+        key: 'css',
+        events: [{
+            eventName: 'afterReadFile',
+            plugin: function(items,config,callback){
+                // items is the list of assets being processed by assetify
+                // config is the configuration passed to assetify.compile
+                // callback is a function to execute after the plugin completes its job
+            }
+        }]
+    });
+```
+
+node-assetify comes with a LESS parsing plugin out of the box, which you can configure by invoking:
+
+```javascript
+    assetify.use(assetify.plugins.less);
+```
