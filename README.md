@@ -156,8 +156,16 @@ assetify.use({
 });
 ```
 
-node-assetify comes with a LESS parsing plugin out of the box, which you can configure by invoking:
+node-assetify comes with a **LESS** parsing plugin out of the box, which you can configure by invoking:
 
 ```javascript
 assetify.use(assetify.plugins.less);
+```
+
+The **LESS** parser will also minify your **LESS** files if required.
+
+Similarly, there's a JS minifier you can use (which is actually just a wrapper around [UglifyJS](https://github.com/mishoo/UglifyJS2 "UglifyJS v2")):
+
+```javascript
+assetify.use(assetify.plugins.minifyJS);
 ```

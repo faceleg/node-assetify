@@ -1,6 +1,7 @@
 var async = require('async'),
     path = require('path'),
     less = require('less'),
+    cleanCss = require('clean-css');
     uglifyjs = require('uglify-js');
 
 function replaceAt(text, index, length, replacement) {
@@ -37,10 +38,7 @@ var api = {
                             if(err){
                                 throw err;
                             }
-                            item.src = tree.toCSS({
-                                compress: config.minify
-                            });
-
+                            item.src = tree.toCSS();
                             done();
                         });
                     }else{
@@ -55,7 +53,25 @@ var api = {
             }
         }]
     },
-    minifyJs: {
+    minifyCSS: {
+        key: 'css',
+        events: [{
+            eventName: 'afterBundle',
+            plugin: function(items, config, callback){
+                async.forEach(items, function(item, done){
+                    var source = item.src.toString();
+                    item.src = cleanCss.process(source);
+                    done();
+                },function(err){
+                    if(err){
+                        throw err;
+                    }
+                    callback();
+                });
+            }
+        }]
+    },
+    minifyJS: {
         key: 'js',
         events: [{
             eventName: 'afterBundle',

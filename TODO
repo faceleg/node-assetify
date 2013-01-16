@@ -1,5 +1,6 @@
 TODO:
 
+- bundling in a plugin.
 - process input files (sass, coffee)
-- minify output js / css (production)
 - hash concatenated output files like /all.js?_=1239123 for improved caching experience
+- watch files for modifications.

@@ -7,7 +7,7 @@ var extend = require('xtend'),
     html = require('./html.js'),
     pluginRegistry = {},
     defaults = {
-        production: false,
+        bundle: false,
         appendTo: global,
         js: [],
         css: []
@@ -30,9 +30,6 @@ function configure(opts){
     if(config.source === config.bin){
         throw new Error("opts.source can't be the same as opts.bin");
     }
-
-    config.bundle = config.production === true; // no reason this should be overwritable.
-    config.minify = config.production === true; // no reason this should be overwritable.
 }
 
 function readFilesAsync(items, cb){
