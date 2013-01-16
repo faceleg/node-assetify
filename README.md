@@ -1,4 +1,4 @@
-# node-assetify [![Build Status](https://travis-ci.org/bevacqua/node-assetify.png?branch=master)](https://travis-ci.org/bevacqua/node-assetify)
+# [node-assetify](https://npmjs.org/package/node-assetify "node-assetify on npmjs") [![Build Status](https://travis-ci.org/bevacqua/node-assetify.png?branch=master)](https://travis-ci.org/bevacqua/node-assetify)
 
 **node-assetify** is an open-source client-side asset manager for **Node.JS** web applications.
 
@@ -144,7 +144,7 @@ Another option is using an _object initializer_:
 
 ```javascript
 assetify.use({
-    key: 'css',
+    key: 'css', // css or js
     events: [{
         eventName: 'afterReadFile',
         plugin: function(items,config,callback){
