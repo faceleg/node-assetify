@@ -198,11 +198,12 @@ var api = {
 
         return config.bin;
     },
-    jQuery: function(version, local){
+    jQuery: function(version, local, profile){
         return {
             ext: '//ajax.googleapis.com/ajax/libs/jquery/' + version + '/jquery.min.js',
             local: local,
-            test: 'window.jQuery'
+            test: 'window.jQuery',
+            profile: profile
         }
     }
 };
