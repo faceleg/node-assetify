@@ -15,45 +15,45 @@ Fetch from **npm**
 Server-side:
 
 ```javascript
-    var bin = __dirname + '/static/bin',
-        assetify.compile({
-            source: __dirname + '/static',
-            bin: bin,
-            js: [
-                '/js/file.js',
-                { profile: 'mystical', local: '/js/admin.js' }
-            ],
-            appendTo: app.locals
-        }, function(err){
-            if(err){
-                throw err;
-            }
-            app.use(connect.static(bin));
-        });
+var bin = __dirname + '/static/bin',
+    assetify.compile({
+        source: __dirname + '/static',
+        bin: bin,
+        js: [
+            '/js/file.js',
+            { profile: 'mystical', local: '/js/admin.js' }
+        ],
+        appendTo: app.locals
+    }, function(err){
+        if(err){
+            throw err;
+        }
+        app.use(connect.static(bin));
+    });
 ```
 
 "Client-side" **jade** template code:
 
 ```jade
-    !=js()
+!=js()
 ```
 
 You could also pass it a _profile name_, to restrict the output to the client:
 
 ```jade
-    !=js('mystical')
+!=js('mystical')
 ```
 
 If you don't want to include non-profile-specific scripts, you can do:
 
 ```jade
-    !=js('mystical', false)
+!=js('mystical', false)
 ```
 
 There are some built-in facilities to speed up your development, for instance, you can add jQuery's CDN version with a local fallback like this:
 
 ```javascript
-    assetify.jQuery('1.8.3', '/js/jquery-1.8.3.min.js')
+assetify.jQuery('1.8.3', '/js/jquery-1.8.3.min.js')
 ```
 
 ## Configuration
@@ -72,58 +72,58 @@ Another option is to provide an object, here you can specify `local` (which is w
 Here is an example configuration module, extracted from [**NBrut**](https://github.com/bevacqua/NBrut "NBrut Node.JS Blogging Engine").
 
 ```javascript
-    var base = __dirname + '/static',
-        assetify = require('node-assetify'),
-        assets = {
-            production: config.env.production,
-            source: base,
-            bin: base + '/bin',
-            css: [
-                '/css/defaults/reset.css',
-                '/css/defaults/elements.css',
-                '/css/defaults/controls.css',
-                '/css/defaults/layout.css',
-                '/css/defaults/design.css',
-                '/css/libs/markdown.css',
-                '/css/libs/prettify.css',
-                '/css/libs/pikaday.css',
-                { profile: 'author', local: '/css/layouts/author.css' },
-                '/css/views/main/entries.css',
-                { profile: 'anon', local: '/css/views/user/register.css' },
-                { profile: 'anon', local: '/css/views/user/login.css' },
-                { profile: 'author', local: '/css/views/author/editor.css' },
-                { profile: 'author', local: '/css/views/author/review.css' }
-            ],
-            js: [
-                assetify.jQuery('1.8.3', '/js/jquery-1.8.3.min.js'),
-                '/js/libs/moment.min.js',
-                '/js/libs/mustache.js',
-                '/js/libs/jquery.textarearesizer.min.js',
-                '/js/libs/Markdown.Converter.js',
-                '/js/libs/Markdown.Sanitizer.js',
-                '/js/libs/Markdown.Editor.js',
-                '/js/libs/prettify.js',
-                '/js/libs/jquery.pikaday.js',
-                '/js/ext/prettify.extensions.js',
-                '/js/nbrut/nbrut.extensions.js',
-                '/js/nbrut/nbrut.core.js',
-                '/js/nbrut/nbrut.md.js',
-                '/js/nbrut/nbrut.ui.js',
-                '/js/nbrut/nbrut.templates.js',
-                '/js/nbrut/nbrut.thin.js',
-                '/js/nbrut/nbrut.init.js',
-                '/js/views/thin.hooks.js',
-                '/js/views/templates.js',
-                { profile: 'anon', local: '/js/views/templates.anon.js' },
-                { profile: 'author', local: '/js/views/templates.author.js'},
-                '/js/views/main/entries.js',
-                '/js/views/main/entry.js',
-                { profile: 'author', local: '/js/views/author/editor.js' },
-                { profile: 'author', local: '/js/views/author/review.js' }
-            ]
-        };
+var base = __dirname + '/static',
+    assetify = require('node-assetify'),
+    assets = {
+        production: config.env.production,
+        source: base,
+        bin: base + '/bin',
+        css: [
+            '/css/defaults/reset.css',
+            '/css/defaults/elements.css',
+            '/css/defaults/controls.css',
+            '/css/defaults/layout.css',
+            '/css/defaults/design.css',
+            '/css/libs/markdown.css',
+            '/css/libs/prettify.css',
+            '/css/libs/pikaday.css',
+            { profile: 'author', local: '/css/layouts/author.css' },
+            '/css/views/main/entries.css',
+            { profile: 'anon', local: '/css/views/user/register.css' },
+            { profile: 'anon', local: '/css/views/user/login.css' },
+            { profile: 'author', local: '/css/views/author/editor.css' },
+            { profile: 'author', local: '/css/views/author/review.css' }
+        ],
+        js: [
+            assetify.jQuery('1.8.3', '/js/jquery-1.8.3.min.js'),
+            '/js/libs/moment.min.js',
+            '/js/libs/mustache.js',
+            '/js/libs/jquery.textarearesizer.min.js',
+            '/js/libs/Markdown.Converter.js',
+            '/js/libs/Markdown.Sanitizer.js',
+            '/js/libs/Markdown.Editor.js',
+            '/js/libs/prettify.js',
+            '/js/libs/jquery.pikaday.js',
+            '/js/ext/prettify.extensions.js',
+            '/js/nbrut/nbrut.extensions.js',
+            '/js/nbrut/nbrut.core.js',
+            '/js/nbrut/nbrut.md.js',
+            '/js/nbrut/nbrut.ui.js',
+            '/js/nbrut/nbrut.templates.js',
+            '/js/nbrut/nbrut.thin.js',
+            '/js/nbrut/nbrut.init.js',
+            '/js/views/thin.hooks.js',
+            '/js/views/templates.js',
+            { profile: 'anon', local: '/js/views/templates.anon.js' },
+            { profile: 'author', local: '/js/views/templates.author.js'},
+            '/js/views/main/entries.js',
+            '/js/views/main/entry.js',
+            { profile: 'author', local: '/js/views/author/editor.js' },
+            { profile: 'author', local: '/js/views/author/review.js' }
+        ]
+    };
 
-    module.exports = assets;
+module.exports = assets;
 ```
 
 ## Plugins
@@ -137,27 +137,27 @@ You can hook into node-assetify through plugins. There are a few events that are
 To configure a plugin, you must add it **before** calling `assetify.compile`. These can be added in two ways. The simpler way is:
 
 ```javascript
-    assetify.use(key,eventName,plugin)
+assetify.use(key,eventName,plugin)
 ```
 
 Another option is using an _object initializer_:
 
 ```javascript
-    assetify.use({
-        key: 'css',
-        events: [{
-            eventName: 'afterReadFile',
-            plugin: function(items,config,callback){
-                // items is the list of assets being processed by assetify
-                // config is the configuration passed to assetify.compile
-                // callback is a function to execute after the plugin completes its job
-            }
-        }]
-    });
+assetify.use({
+    key: 'css',
+    events: [{
+        eventName: 'afterReadFile',
+        plugin: function(items,config,callback){
+            // items is the list of assets being processed by assetify
+            // config is the configuration passed to assetify.compile
+            // callback is a function to execute after the plugin completes its job
+        }
+    }]
+});
 ```
 
 node-assetify comes with a LESS parsing plugin out of the box, which you can configure by invoking:
 
 ```javascript
-    assetify.use(assetify.plugins.less);
+assetify.use(assetify.plugins.less);
 ```
