@@ -176,7 +176,7 @@ function raise(key, eventName, items, done){
     done(null);
 }
 
-function process(items, tag, key, done){
+function process(items, key, tag, done){
     readBundleAndOutput(items, key, function(results){
         config.appendTo[key] = tag(results);
         return done();
@@ -184,15 +184,15 @@ function process(items, tag, key, done){
 }
 
 var api = {
-    publish: function(opts, cb){
+    compile: function(opts, cb){
         configure(opts);
 
         async.parallel([
             function(callback){
-                process(config.js, html.scriptTags, 'js', callback);
+                process(config.js, 'js', html.scriptTags, callback);
             },
             function(callback){
-                process(config.css, html.styleTags, 'css', callback);
+                process(config.css, 'css', html.styleTags, callback);
             }
         ], cb);
 
