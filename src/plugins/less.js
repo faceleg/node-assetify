@@ -1,52 +1,20 @@
-var async = require('async'),
-    path = require('path'),
-    less = require('less');
+var path = require('path'),
+    less = require('less'),
+    parser = require('./parser');
 
-function replaceAt(text, index, length, replacement) {
-    return text.substr(0, index) + replacement + text.substr(index + length);
-}
+module.exports = parser.configure('css',['.less'], function(item, config, ctx, done){
+    var filename = path.join(config.source, item.local),
+        includes = path.dirname(filename),
+        parser = new(less.Parser)({
+            paths: [includes],
+            filename: path.basename(filename)
+        });
 
-function replaceExtension(source, text, replacement){
-    return replaceAt(source, source.lastIndexOf(text), text.length, replacement)
-}
-
-module.exports = {
-    key: 'css',
-    events: [{
-        eventName: 'afterReadFile',
-        plugin: function(items, config, ctx, callback){
-            async.forEach(items, function(item, done){
-                var extIn = '.less',
-                    extOut = '.css',
-                    i = item.path.lastIndexOf(extIn);
-
-                if(path.extname(item.path) === extIn){
-                    item.out = replaceExtension(item.out, extIn, extOut);
-                    item.path = replaceExtension(item.path, extIn, extOut);
-
-                    var filename = path.join(config.source, item.local),
-                        includes = path.dirname(filename),
-                        parser = new(less.Parser)({
-                            paths: [includes],
-                            filename: path.basename(filename)
-                        });
-
-                    parser.parse(item.src.toString(), function (err, tree) {
-                        if(err){
-                            throw err;
-                        }
-                        item.src = tree.toCSS();
-                        done();
-                    });
-                }else{
-                    done();
-                }
-            },function(err){
-                if(err){
-                    throw err;
-                }
-                callback();
-            });
+    parser.parse(item.src.toString(), function (err, tree) {
+        if(err){
+            throw err;
         }
-    }]
-};
+        item.src = tree.toCSS();
+        done();
+    });
+});
