@@ -73,6 +73,7 @@ function bundleAsync(items, key, cb){
             bundle = {
                 profile: profile,
                 local: filename,
+                out: filename,
                 path: path.join(config.bin, filename),
                 sources: []
             };
