@@ -14,17 +14,22 @@ Fetch from **npm**
 
 Server-side:
 
-    var bin = assetify.publish({
-        source: __dirname + '/static',
-        bin: __dirname + '/static/bin'
-        js: [
-            '/js/file.js',
-            { profile: 'mystical', local: '/js/admin.js' }
-        ],
-        appendTo: app.locals
-    });
+    var bin = __dirname + '/static/bin',
+        assetify.publish({
+            source: __dirname + '/static',
+            bin: bin,
+            js: [
+                '/js/file.js',
+                { profile: 'mystical', local: '/js/admin.js' }
+            ],
+            appendTo: app.locals
+        }, function(err){
+            if(err){
+                throw err;
+            }
+            app.use(connect.static(bin));
+        });
 
-    app.use(connect.static(bin)); // bin == opts.bin
 
 Client-side **jade** template code:
 
@@ -34,7 +39,7 @@ You could also pass a _profile name_ to the client-side function:
 
     !=js('mystical')
 
-If you don't want to include profile-less scripts, you can do:
+If you don't want to include profile-specific scripts, you can do:
 
     !=js('mystical', false)
 

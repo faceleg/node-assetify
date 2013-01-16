@@ -4,6 +4,7 @@ var extend = require('xtend'),
     path = require('path'),
     async = require('async'),
     disk = require('./disk.js'),
+    html = require('./html.js'),
     defaults = {
         production: false,
         appendTo: global,
@@ -114,11 +115,6 @@ function outputAsync(items, cb){
     });
 }
 
-function raise(key, eventName, items, done){
-    // TODO: plugins to minify and process input files
-    done(null);
-}
-
 function readBundleAndOutput(items, key, cb){
     fse.remove(config.bin, function(){
         readFilesAsync(items, function(err){
@@ -175,77 +171,30 @@ function profileNamesDistinct(items){
     return names;
 }
 
-function profile(tags){
-    return function(key, includeCommon){
-        var results = [];
-        tags.forEach(function(tag){
-            if((tag.profile === undefined && includeCommon !== false) || tag.profile === key){
-                results.push(tag.html);
-            }
-        });
-        return results.join('');
-    };
+function raise(key, eventName, items, done){
+    // TODO: plugins to minify and process input files
+    done(null);
 }
 
-function renderTags(items, opts){
-    var tags = [];
-    items.forEach(function(item){
-        var external = item.ext !== undefined,
-            href = external ? item.ext : item.local;
-
-        if(!external && href.indexOf('/') !== 0){
-            href = '/' + href;
-        }
-
-        var tag = opts.render(href);
-        tags.push({ html: tag, profile: item.profile });
-
-        (opts.then || function(){})(item, tags);
-    });
-
-    return profile(tags);
-}
-
-function scriptTags(items){
-    function then(item, tags){
-        if(item.ext !== undefined && item.local !== undefined){
-            if(item.test === undefined){
-                throw new Error('fallback test is missing');
-            }
-            var code = item.test + ' || document.write(unescape("%3Cscript src=\'' + item.local + '\'%3E%3C/script%3E"))';
-            var fallback = '<script>' + code +  '</script>';
-            tags.push({ html: fallback, profile: item.profile });
-        }
-    }
-
-    return renderTags(items, {
-        render: function(href){
-            return '<script src="' + href + '"></script>'
-        },
-        then: then
-    });
-}
-
-function styleTags(items){
-    return renderTags(items, {
-        render: function(href){
-            return '<link rel="stylesheet" href="' + href + '">';
-        }
-    })
-}
-
-function process(items, tag, key){
+function process(items, tag, key, done){
     readBundleAndOutput(items, key, function(results){
         config.appendTo[key] = tag(results);
+        return done();
     });
 }
 
 var api = {
-    publish: function(opts){
+    publish: function(opts, cb){
         configure(opts);
 
-        process(config.js, scriptTags, 'js');
-        process(config.css, styleTags, 'css');
+        async.parallel([
+            function(callback){
+                process(config.js, html.scriptTags, 'js', callback);
+            },
+            function(callback){
+                process(config.css, html.styleTags, 'css', callback);
+            }
+        ], cb);
 
         return config.bin;
     },
