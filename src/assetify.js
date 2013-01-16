@@ -171,8 +171,19 @@ function profileNamesDistinct(items){
     return names;
 }
 
+function getPlugins(key, eventName){
+    var id = key + '_' + eventName;
+    if (plugins[id] === undefined){
+        plugins[id] = [];
+    }
+    return plugins[id];
+}
+
 function raise(key, eventName, items, done){
-    // TODO: plugins to minify and process input files
+    var plugins = getPlugins(key, eventName);
+    plugins.forEach(function(plugin){
+        plugin(items);
+    });
     done(null);
 }
 
@@ -197,6 +208,10 @@ var api = {
         ], cb);
 
         return config.bin;
+    },
+    use: function(key, eventName, plugin){
+        var plugins = getPlugins(key, eventName);
+        plugins.push(plugin);
     },
     jQuery: function(version, local, profile){
         return {
