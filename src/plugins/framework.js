@@ -1,5 +1,4 @@
-var pluginRegistry = {},
-    configuration;
+var pluginRegistry = {};
 
 function ensurePlugins(key, eventName){
     var id = (key || 'all') + '_' + eventName;
@@ -21,12 +20,12 @@ function addPlugin(key, eventName, plugin){
     plugins.push(plugin);
 }
 
-function raise(key, eventName, items, done){
+function raise(key, eventName, items, config, done){
     var plugins = getPlugins(key, eventName),
         tasks = [];
 
     plugins.forEach(function(plugin){
-        tasks.push(async.apply(plugin, items, configuration));
+        tasks.push(async.apply(plugin, items, config));
     });
 
     async.series(tasks, function(err){
@@ -47,13 +46,9 @@ function register(key, eventName, plugin){
     }
 }
 
-var api = function(config){
-    configuration = config;
-
-    return {
-        register: register,
-        raise: raise
-    };
-} ;
+var api = {
+    register: register,
+    raise: raise
+};
 
 module.exports = api;

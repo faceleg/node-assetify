@@ -5,7 +5,7 @@ var extend = require('xtend'),
     async = require('async'),
     disk = require('./disk.js'),
     html = require('./html.js'),
-    pluginFramework,
+    pluginFramework = require('./plugins/framework.js'),
     defaults = {
         bundle: false,
         appendTo: global,
@@ -30,8 +30,6 @@ function configure(opts){
     if(config.source === config.bin){
         throw new Error("opts.source can't be the same as opts.bin");
     }
-
-    pluginFramework  = require('./plugins/framework.js')(config);
 }
 
 function readFilesAsync(items, cb){
@@ -125,7 +123,7 @@ function readBundleAndOutput(items, key, cb){
                 throw err;
             }
 
-            pluginFramework.raise(key, 'afterReadFile', items, bundle);
+            pluginFramework.raise(key, 'afterReadFile', items, config, bundle);
 
             function bundle(err){
                 if(err){
@@ -135,7 +133,7 @@ function readBundleAndOutput(items, key, cb){
                     if(err){
                         throw err;
                     }
-                    pluginFramework.raise(key, 'afterBundle', items, copy);
+                    pluginFramework.raise(key, 'afterBundle', items, config, copy);
                 });
             }
 
@@ -147,7 +145,7 @@ function readBundleAndOutput(items, key, cb){
                     if(err){
                         throw err;
                     }
-                    pluginFramework.raise(key, 'afterOutput', items, done);
+                    pluginFramework.raise(key, 'afterOutput', items, config, done);
                 });
             }
 
