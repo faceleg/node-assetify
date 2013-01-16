@@ -26,9 +26,16 @@ function write(filename, data, cb){
     });
 }
 
+function remove(path, cb){
+    fse.remove(path, function(err){
+        cb();
+    });
+}
+
 var api = {
     copySafe: copy,
-    write: write
+    write: write,
+    removeSafe: remove
 };
 
 

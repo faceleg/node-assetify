@@ -72,7 +72,7 @@ function processLoop(items, key, cb){
     var ctx = { key: key };
 
     async.series([
-        async.apply(fse.remove, config.bin),
+        async.apply(disk.removeSafe, config.bin),
         async.apply(readFilesAsync, items),
         async.apply(pluginFramework.raise, key, 'afterReadFile', items, config, ctx),
         async.apply(pluginFramework.raise, key, 'beforeBundle', items, config, ctx),
