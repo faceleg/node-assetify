@@ -5,6 +5,7 @@ var extend = require('xtend'),
     async = require('async'),
     disk = require('./disk.js'),
     html = require('./html.js'),
+    pluginRegistry = {},
     defaults = {
         production: false,
         appendTo: global,
@@ -173,10 +174,10 @@ function profileNamesDistinct(items){
 
 function getPlugins(key, eventName){
     var id = key + '_' + eventName;
-    if (plugins[id] === undefined){
-        plugins[id] = [];
+    if (pluginRegistry[id] === undefined){
+        pluginRegistry[id] = [];
     }
-    return plugins[id];
+    return pluginRegistry[id];
 }
 
 function raise(key, eventName, items, done){
@@ -210,8 +211,14 @@ var api = {
         return config.bin;
     },
     use: function(key, eventName, plugin){
-        var plugins = getPlugins(key, eventName);
-        plugins.push(plugin);
+        if(typeof key === 'object'){
+            key.events.forEach(function(opts){
+                use(key.key, key.eventName, key.plugin);
+            });
+        }else{
+            var plugins = getPlugins(key, eventName);
+            plugins.push(plugin);
+        }
     },
     jQuery: function(version, local, profile){
         return {
@@ -220,7 +227,8 @@ var api = {
             test: 'window.jQuery',
             profile: profile
         }
-    }
+    },
+    plugins: require('./plugins.js')
 };
 
 module.exports = api;
