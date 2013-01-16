@@ -61,14 +61,12 @@ var api = {
             eventName: 'afterBundle',
             plugin: function(items, config, callback){
                 async.forEach(items, function(item, done){
-                    var jsp = uglifyjs.parser,
-                        pro = uglifyjs.uglify;
+                    var source = item.src.toString(),
+                        result = uglifyjs.minify(source, {
+                            fromString: true
+                        });
 
-                    var ast = jsp.parse(item.src.toString()); // parse code and get the initial AST
-                    ast = pro.ast_mangle(ast); // get a new AST with mangled names
-                    ast = pro.ast_squeeze(ast); // get an AST with compression optimizations
-                    item.src = pro.gen_code(ast); // compress code
-
+                    item.src = result.code;
                     done();
                 },function(err){
                     if(err){
