@@ -173,3 +173,18 @@ Similarly, there's a JS minifier you can use (which is actually just a wrapper a
 ```javascript
 assetify.use(assetify.plugins.minifyJS);
 ```
+
+A typical configuration might be:
+
+```javascript
+assets.appendTo = server.locals;
+assetify.use(assetify.plugins.less);
+
+if (config.env.production){
+    assetify.use(assetify.plugins.bundle);
+    assetify.use(assetify.plugins.minifyCSS);
+    assetify.use(assetify.plugins.minifyJS);
+}
+
+assetify.compile(assets, configureServer);
+```

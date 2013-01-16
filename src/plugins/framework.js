@@ -21,12 +21,12 @@ function addPlugin(key, eventName, plugin){
     plugins.push(plugin);
 }
 
-function raise(key, eventName, items, config, done){
+function raise(key, eventName, items, config, ctx, done){
     var plugins = getPlugins(key, eventName),
         tasks = [];
 
     plugins.forEach(function(plugin){
-        tasks.push(async.apply(plugin, items, config));
+        tasks.push(async.apply(plugin, items, config, ctx));
     });
 
     async.series(tasks, function(err){
