@@ -60,7 +60,7 @@ There are some built-in facilities to speed up your development, for instance, y
 You could provide a string, telling assetify where the file is (relative to **source**), for example `/css/ie6-hacks.css`.
 Another option is to provide an object, here you can specify `local` (which is what plain strings convert to), and `profile`, which is the name of the profile you want this file to be included in. `profile` defaults to `undefined`, which means that this asset is used by every profile.
 
-Here is an example configuration module, extracted from **[NBrut]**(https://github.com/bevacqua/NBrut "NBrut Node.JS Blogging Engine").
+Here is an example configuration module, extracted from [**NBrut**](https://github.com/bevacqua/NBrut "NBrut Node.JS Blogging Engine").
 
     var base = __dirname + '/static',
         assetify = require('node-assetify'),
