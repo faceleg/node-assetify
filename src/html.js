@@ -14,7 +14,7 @@ function renderTags(items, opts){
     var tags = [];
     items.forEach(function(item){
         var external = item.ext !== undefined,
-            href = external ? item.ext : item.local;
+            href = external ? item.ext : item.out;
 
         if(!external && href.indexOf('/') !== 0){
             href = '/' + href;
@@ -31,11 +31,11 @@ function renderTags(items, opts){
 
 function scriptTags(items){
     function then(item, tags){
-        if(item.ext !== undefined && item.local !== undefined){
+        if(item.ext !== undefined && item.out !== undefined){
             if(item.test === undefined){
                 throw new Error('fallback test is missing');
             }
-            var code = item.test + ' || document.write(unescape("%3Cscript src=\'' + item.local + '\'%3E%3C/script%3E"))';
+            var code = item.test + ' || document.write(unescape("%3Cscript src=\'' + item.out + '\'%3E%3C/script%3E"))';
             var fallback = '<script>' + code +  '</script>';
             tags.push({ html: fallback, profile: item.profile });
         }

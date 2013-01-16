@@ -6,6 +6,10 @@ function replaceAt(text, index, length, replacement) {
     return text.substr(0, index) + replacement + text.substr(index + length);
 }
 
+function replaceExtension(source, text, replacement){
+    return replaceAt(source, source.lastIndexOf(text), text.length, replacement)
+}
+
 var api = {
     less: {
         key: 'css',
@@ -18,13 +22,14 @@ var api = {
                         i = item.path.lastIndexOf(extIn);
 
                     if(path.extname(item.path) === extIn){
-                        item.path = replaceAt(item.path, i, extIn.length, extOut);
+                        item.out = replaceExtension(item.out, extIn, extOut);
+                        item.path = replaceExtension(item.path, extIn, extOut);
 
                         var filename = path.join(config.source, item.local),
                             includes = path.dirname(filename),
                             parser = new(less.Parser)({
                                 paths: [includes],
-                                filename: path.basename(item.local)
+                                filename: path.basename(filename)
                             });
 
                         parser.parse(item.src.toString(), function (err, tree) {
@@ -41,9 +46,6 @@ var api = {
                         done();
                     }
                 },function(err){
-                    if(err){
-                        throw err;
-                    }
                     callback();
                 });
             }

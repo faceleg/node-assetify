@@ -54,6 +54,7 @@ function readFilesAsync(items, cb){
                 }
                 item.src = data;
                 item.path = path.join(config.bin, item.local);
+                item.out = item.local; // relative path in the output directory
                 callback(err);
             });
         }
