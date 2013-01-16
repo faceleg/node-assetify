@@ -41,13 +41,13 @@ var bin = __dirname + '/static/bin',
 You could also pass it a _profile name_, to restrict the output to the client:
 
 ```jade
-!=js('mystical')
+!=css('mystical')
 ```
 
 If you don't want to include non-profile-specific scripts, you can do:
 
 ```jade
-!=js('mystical', false)
+!=css('mystical', false)
 ```
 
 There are some built-in facilities to speed up your development, for instance, you can add jQuery's CDN version with a local fallback like this:
@@ -60,7 +60,6 @@ assetify.jQuery('1.8.3', '/js/jquery-1.8.3.min.js')
 
  - **source**: the folder where your static assets are during development.
  - **bin**: the folder where the assets processed by assetify should be placed. this is the folder that should be exposed to the public.
- - **production**: whether assetify should concatenate sources, bundling them to a single physical file. defaults to `false`. common configuration: `process.env.NODE_ENV`.
  - **appendTo**: an object where the HTML tag generation functions are appended to. defaults to `global`. common configuration: `app.locals`.
  - **js/css**: expects an array of asset configurations.
 
@@ -75,7 +74,6 @@ Here is an example configuration module, extracted from [**NBrut**](https://gith
 var base = __dirname + '/static',
     assetify = require('node-assetify'),
     assets = {
-        production: config.env.production,
         source: base,
         bin: base + '/bin',
         css: [
@@ -131,6 +129,7 @@ module.exports = assets;
 You can hook into node-assetify through plugins. There are a few events that are raised during the assetify process.
 
 - **afterReadFile**: Raised after, you guessed it, all files have been read from disk into memory. Useful for _pre-processing_ like **LESS** parsing.
+- **beforeBundle**: Raised before files are bundled together into profiles. Useful for _actually bundling_ (which is a plugin in itself).
 - **afterBundle**: Raised after files are bundled together into profiles. Useful for _minification_.
 - **afterOutput**: Raised after files are copied to the final destinations. Useful for _post-processing_, like licensing comments.
 
@@ -147,13 +146,22 @@ assetify.use({
     key: 'css', // css or js
     events: [{
         eventName: 'afterReadFile',
-        plugin: function(items,config,callback){
+        plugin: function(items,config,ctx,callback){
             // items is the list of assets being processed by assetify
             // config is the configuration passed to assetify.compile
+            // ctx is the context of the raised plugin, currently it just contains a key indicating whether the process loop is css or js
             // callback is a function to execute after the plugin completes its job
         }
     }]
 });
+```
+
+### Out of the box
+
+As mentioned earlier, a `bundle` plugin is available to allow you to concatenate output for each profile, just use:
+
+```javascript
+assetify.use(assetify.plugins.bundle);
 ```
 
 node-assetify comes with a **LESS** parsing plugin out of the box, which you can configure by invoking:
@@ -188,3 +196,5 @@ if (config.env.production){
 
 assetify.compile(assets, configureServer);
 ```
+
+Please report any [issues](https://github.com/bevacqua/node-assetify/issues "Issue Tracker") you might find.

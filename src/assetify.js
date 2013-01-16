@@ -7,7 +7,6 @@ var extend = require('xtend'),
     html = require('./html.js'),
     pluginFramework = require('./plugins/framework.js'),
     defaults = {
-        bundle: false,
         appendTo: global,
         js: [],
         css: []
@@ -70,48 +69,21 @@ function outputAsync(items, cb){
 }
 
 function processLoop(items, key, cb){
-    fse.remove(config.bin, function(){
-        readFilesAsync(items, function(err){
-            if(err){
-                throw err;
-            }
-            var ctx = { key: key };
+    var ctx = { key: key };
 
-            pluginFramework.raise(key, 'afterReadFile', items, config, ctx, bundle);
-
-            function bundle(err){
-                if(err){
-                    throw err;
-                }
-                pluginFramework.raise(key, 'beforeBundle', items, config, ctx, afterBundle);
-            }
-
-            function afterBundle(err){
-                if(err){
-                    throw err;
-                }
-                pluginFramework.raise(key, 'afterBundle', items, config, ctx, copy);
-            }
-
-            function copy(err){
-                if(err){
-                    throw err;
-                }
-                outputAsync(items, function(err){
-                    if(err){
-                        throw err;
-                    }
-                    pluginFramework.raise(key, 'afterOutput', items, config, ctx, done);
-                });
-            }
-
-            function done(err){
-                if(err){
-                    throw err;
-                }
-                cb(items);
-            }
-        });
+    async.series([
+        async.apply(fse.remove, config.bin),
+        async.apply(readFilesAsync, items),
+        async.apply(pluginFramework.raise, key, 'afterReadFile', items, config, ctx),
+        async.apply(pluginFramework.raise, key, 'beforeBundle', items, config, ctx),
+        async.apply(pluginFramework.raise, key, 'afterBundle', items, config, ctx),
+        async.apply(outputAsync, items),
+        async.apply(pluginFramework.raise, key, 'afterOutput', items, config, ctx)
+    ],function (err){
+        if(err){
+            throw err;
+        }
+        cb(items);
     });
 }
 
