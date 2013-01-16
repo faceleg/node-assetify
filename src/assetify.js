@@ -195,6 +195,17 @@ function process(items, key, tag, done){
     });
 }
 
+function use(key, eventName, plugin){
+    if(typeof key === 'object'){
+        key.events.forEach(function(opts){
+            use(key.key, opts.eventName, opts.plugin);
+        });
+    }else{
+        var plugins = getPlugins(key, eventName);
+        plugins.push(plugin);
+    }
+}
+
 var api = {
     compile: function(opts, cb){
         configure(opts);
@@ -210,16 +221,7 @@ var api = {
 
         return config.bin;
     },
-    use: function(key, eventName, plugin){
-        if(typeof key === 'object'){
-            key.events.forEach(function(opts){
-                use(key.key, key.eventName, key.plugin);
-            });
-        }else{
-            var plugins = getPlugins(key, eventName);
-            plugins.push(plugin);
-        }
-    },
+    use: use,
     jQuery: function(version, local, profile){
         return {
             ext: '//ajax.googleapis.com/ajax/libs/jquery/' + version + '/jquery.min.js',
