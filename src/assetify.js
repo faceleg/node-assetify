@@ -234,7 +234,7 @@ var api = {
             profile: profile
         }
     },
-    plugins: require('./plugins.js')
+    plugins: require('./plugins/all.js')
 };
 
 module.exports = api;
