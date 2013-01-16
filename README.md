@@ -14,6 +14,7 @@ Fetch from **npm**
 
 Server-side:
 
+```javascript
     var bin = __dirname + '/static/bin',
         assetify.compile({
             source: __dirname + '/static',
@@ -29,23 +30,31 @@ Server-side:
             }
             app.use(connect.static(bin));
         });
-
+```
 
 "Client-side" **jade** template code:
 
+```jade
     !=js()
+```
 
 You could also pass it a _profile name_, to restrict the output to the client:
 
+```jade
     !=js('mystical')
+```
 
 If you don't want to include non-profile-specific scripts, you can do:
 
+```jade
     !=js('mystical', false)
+```
 
 There are some built-in facilities to speed up your development, for instance, you can add jQuery's CDN version with a local fallback like this:
 
+```javascript
     assetify.jQuery('1.8.3', '/js/jquery-1.8.3.min.js')
+```
 
 ## Configuration
 
