@@ -1,4 +1,5 @@
-var path = require('path'),
+var async = require('async'),
+    path = require('path'),
     less = require('less');
 
 function replaceAt(text, index, length, replacement) {
@@ -10,22 +11,40 @@ var api = {
         key: 'css',
         events: [{
             eventName: 'afterReadFile',
-            plugin: function(items){
-                items.forEach(function(item){
-                    var ext = '.less';
-                    if(path.extname(item.path) === ext){
-                        var i = item.path.lastIndexOf(ext);
+            plugin: function(items, config, callback){
+                async.forEach(items, function(item, done){
+                    var extIn = '.less',
+                        extOut = '.css',
+                        i = item.path.lastIndexOf(extIn);
 
-                        item.path = replaceAt(item.path, i, ext.length, '.css');
+                    if(path.extname(item.path) === extIn){
+                        item.path = replaceAt(item.path, i, extIn.length, extOut);
 
-                        less.render(item.src, function (err, css) {
+                        var filename = path.join(config.source, item.local),
+                            includes = path.dirname(filename),
+                            parser = new(less.Parser)({
+                                paths: [includes],
+                                filename: path.basename(item.local)
+                            });
+
+                        parser.parse(item.src.toString(), function (err, tree) {
                             if(err){
                                 throw err;
                             }
-                            item.src = css;
-                            console.log(item.src);
+                            item.src = tree.toCSS({
+                                compress: config.minify
+                            });
+
+                            done();
                         });
+                    }else{
+                        done();
                     }
+                },function(err){
+                    if(err){
+                        throw err;
+                    }
+                    callback();
                 });
             }
         }]

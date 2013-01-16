@@ -32,6 +32,7 @@ function configure(opts){
     }
 
     config.bundle = config.production === true; // no reason this should be overwritable.
+    config.minify = config.production === true; // no reason this should be overwritable.
 }
 
 function readFilesAsync(items, cb){
@@ -181,11 +182,19 @@ function getPlugins(key, eventName){
 }
 
 function raise(key, eventName, items, done){
-    var plugins = getPlugins(key, eventName);
+    var plugins = getPlugins(key, eventName),
+        tasks = [];
+
     plugins.forEach(function(plugin){
-        plugin(items);
+        tasks.push(async.apply(plugin, items, config));
     });
-    done(null);
+
+    async.series(tasks, function(err){
+        if(err){
+            throw err;
+        }
+        return done(null);
+    });
 }
 
 function process(items, key, tag, done){
@@ -211,12 +220,8 @@ var api = {
         configure(opts);
 
         async.parallel([
-            function(callback){
-                process(config.js, 'js', html.scriptTags, callback);
-            },
-            function(callback){
-                process(config.css, 'css', html.styleTags, callback);
-            }
+            async.apply(process, config.js, 'js', html.scriptTags),
+            async.apply(process, config.css, 'css', html.styleTags)
         ], cb);
 
         return config.bin;
