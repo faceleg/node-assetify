@@ -13,31 +13,35 @@ function getParser(key, extensions, parse){
     return {
         key: key,
         events: [{
-            eventName: 'afterReadFile'
-        }],
-        plugin: function(items, config, ctx, callback){
-            var extOut = '.' + key;
+            eventName: 'afterReadFile',
+            plugin: function(items, config, ctx, callback){
+                var extOut = '.' + key;
 
-            async.forEach(items, function(item, done){
-                var extName = path.extname(item.path);
+                async.forEach(items, function(item, done){
+                    var extName = path.extname(item.path);
 
-                extensions.every(function(ext){
-                    if(extName === ext){
-                        item.out = replaceExtension(item.out, ext, extOut);
-                        item.path = replaceExtension(item.path, ext, extOut);
+                    var found = extensions.some(function(ext){
+                        if(extName === ext){
+                            item.out = replaceExtension(item.out, ext, extOut);
+                            item.path = replaceExtension(item.path, ext, extOut);
 
-                        parse(item, config, ctx, done);
+                            parse(item, config, ctx, done);
+                            return true;
+                        }
                         return false;
+                    });
+
+                    if(!found){
+                        done();
                     }
-                    return true;
+                },function(err){
+                    if(err){
+                        throw err;
+                    }
+                    callback();
                 });
-            },function(err){
-                if(err){
-                    throw err;
-                }
-                callback();
-            });
-        }
+            }
+        }]
     }
 }
 

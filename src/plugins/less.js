@@ -1,6 +1,6 @@
 var path = require('path'),
     less = require('less'),
-    parser = require('./parser');
+    parser = require('./parser.js');
 
 module.exports = parser.configure('css',['.less'], function(item, config, ctx, done){
     var filename = path.join(config.source, item.local),
