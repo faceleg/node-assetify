@@ -62,7 +62,7 @@ Another option is to provide an object, here you can specify `local` (which is w
 
 Here is an example configuration module, extracted from [**NBrut**](https://github.com/bevacqua/NBrut "NBrut Node.JS Blogging Engine").
 
-```
+```javascript
     var base = __dirname + '/static',
         assetify = require('node-assetify'),
         assets = {
@@ -115,7 +115,7 @@ Here is an example configuration module, extracted from [**NBrut**](https://gith
         };
 
     module.exports = assets;
-```javascript
+```
 
 ## Plugins
 
