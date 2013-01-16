@@ -5,7 +5,7 @@ var extend = require('xtend'),
     async = require('async'),
     disk = require('./disk.js'),
     html = require('./html.js'),
-    pluginRegistry = {},
+    pluginFramework,
     defaults = {
         bundle: false,
         appendTo: global,
@@ -30,6 +30,8 @@ function configure(opts){
     if(config.source === config.bin){
         throw new Error("opts.source can't be the same as opts.bin");
     }
+
+    pluginFramework  = require('./plugins/framework.js')(config);
 }
 
 function readFilesAsync(items, cb){
@@ -123,7 +125,7 @@ function readBundleAndOutput(items, key, cb){
                 throw err;
             }
 
-            raise(key, 'afterReadFile', items, bundle);
+            pluginFramework.raise(key, 'afterReadFile', items, bundle);
 
             function bundle(err){
                 if(err){
@@ -133,7 +135,7 @@ function readBundleAndOutput(items, key, cb){
                     if(err){
                         throw err;
                     }
-                    raise(key, 'afterBundle', items, copy);
+                    pluginFramework.raise(key, 'afterBundle', items, copy);
                 });
             }
 
@@ -145,7 +147,7 @@ function readBundleAndOutput(items, key, cb){
                     if(err){
                         throw err;
                     }
-                    raise(key, 'afterOutput', items, done);
+                    pluginFramework.raise(key, 'afterOutput', items, done);
                 });
             }
 
@@ -172,46 +174,11 @@ function profileNamesDistinct(items){
     return names;
 }
 
-function getPlugins(key, eventName){
-    var id = key + '_' + eventName;
-    if (pluginRegistry[id] === undefined){
-        pluginRegistry[id] = [];
-    }
-    return pluginRegistry[id];
-}
-
-function raise(key, eventName, items, done){
-    var plugins = getPlugins(key, eventName),
-        tasks = [];
-
-    plugins.forEach(function(plugin){
-        tasks.push(async.apply(plugin, items, config));
-    });
-
-    async.series(tasks, function(err){
-        if(err){
-            throw err;
-        }
-        return done(null);
-    });
-}
-
 function process(items, key, tag, done){
     readBundleAndOutput(items, key, function(results){
         config.appendTo[key] = tag(results);
         return done();
     });
-}
-
-function use(key, eventName, plugin){
-    if(typeof key === 'object'){
-        key.events.forEach(function(opts){
-            use(key.key, opts.eventName, opts.plugin);
-        });
-    }else{
-        var plugins = getPlugins(key, eventName);
-        plugins.push(plugin);
-    }
 }
 
 var api = {
@@ -225,7 +192,7 @@ var api = {
 
         return config.bin;
     },
-    use: use,
+    use: pluginFramework.register,
     jQuery: function(version, local, profile){
         return {
             ext: '//ajax.googleapis.com/ajax/libs/jquery/' + version + '/jquery.min.js',
