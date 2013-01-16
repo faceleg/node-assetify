@@ -58,53 +58,6 @@ function readFilesAsync(items, cb){
     }, cb);
 }
 
-function bundleAsync(items, key, cb){
-    if(config.bundle === false){
-        return cb(null); // leave as-is.
-    }
-    var profiles = profileNamesDistinct(items),
-        bundles = [];
-
-    return async.forEach(profiles, function(profile, done){
-        var filename = profile + '.' + key,
-            bundle = {
-                profile: profile,
-                local: filename,
-                out: filename,
-                path: path.join(config.bin, filename),
-                sources: []
-            };
-
-        items.forEach(function(item){
-            if(item.profile === undefined || item.profile === profile){
-                if(item.ext === undefined){
-                    if(item.src === undefined){
-                        throw new Error('item has no source nor is an external resource');
-                    }
-                    bundle.sources.push(item.src);
-                }else{
-                    if (bundles.indexOf(item) === -1){
-                        bundles.push(item); // keep external resources unaltered.
-                    }
-                }
-            }
-        });
-
-        bundle.src = bundle.sources.join('\n');
-        bundles.push(bundle);
-        return done();
-    }, function(err){
-        if(err){
-            throw err;
-        }
-        items.splice(0, items.length);
-        bundles.forEach(function(bundle){
-            items.push(bundle);
-        });
-        cb(null);
-    });
-}
-
 function outputAsync(items, cb){
     async.forEach(items, function(item, callback){
         disk.write(item.path, item.src, callback);
@@ -116,25 +69,28 @@ function outputAsync(items, cb){
     });
 }
 
-function readBundleAndOutput(items, key, cb){
+function processLoop(items, key, cb){
     fse.remove(config.bin, function(){
         readFilesAsync(items, function(err){
             if(err){
                 throw err;
             }
+            var ctx = { key: key };
 
-            pluginFramework.raise(key, 'afterReadFile', items, config, bundle);
+            pluginFramework.raise(key, 'afterReadFile', items, config, ctx, bundle);
 
             function bundle(err){
                 if(err){
                     throw err;
                 }
-                bundleAsync(items, key, function(err){
-                    if(err){
-                        throw err;
-                    }
-                    pluginFramework.raise(key, 'afterBundle', items, config, copy);
-                });
+                pluginFramework.raise(key, 'beforeBundle', items, config, ctx, afterBundle);
+            }
+
+            function afterBundle(err){
+                if(err){
+                    throw err;
+                }
+                pluginFramework.raise(key, 'afterBundle', items, config, ctx, copy);
             }
 
             function copy(err){
@@ -145,7 +101,7 @@ function readBundleAndOutput(items, key, cb){
                     if(err){
                         throw err;
                     }
-                    pluginFramework.raise(key, 'afterOutput', items, config, done);
+                    pluginFramework.raise(key, 'afterOutput', items, config, ctx, done);
                 });
             }
 
@@ -159,21 +115,8 @@ function readBundleAndOutput(items, key, cb){
     });
 }
 
-function profileNamesDistinct(items){
-    var names = [undefined];
-    items.forEach(function(item){
-        if (names.indexOf(item.profile) === -1){
-            names.push(item.profile);
-        }
-    });
-    if(names.length > 1){ // if using profiles, don't save a common profile.
-        return names.slice(1);
-    }
-    return names;
-}
-
 function process(items, key, tag, done){
-    readBundleAndOutput(items, key, function(results){
+    processLoop(items, key, function(results){
         config.appendTo[key] = tag(results);
         return done();
     });

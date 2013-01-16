@@ -1,11 +1,12 @@
-var pluginRegistry = {};
+var async = require('async'),
+    registry = {};
 
 function ensurePlugins(key, eventName){
     var id = (key || 'all') + '_' + eventName;
-    if (pluginRegistry[id] === undefined){
-        pluginRegistry[id] = [];
+    if (registry[id] === undefined){
+        registry[id] = [];
     }
-    return pluginRegistry[id];
+    return registry[id];
 }
 
 function getPlugins(key, eventName){

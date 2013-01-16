@@ -5,7 +5,7 @@ module.exports = {
     key: 'js',
     events: [{
         eventName: 'afterBundle',
-        plugin: function(items, config, callback){
+        plugin: function(items, config, ctx, callback){
             async.forEach(items, function(item, done){
                 var source = item.src.toString(),
                     result = uglifyjs.minify(source, {

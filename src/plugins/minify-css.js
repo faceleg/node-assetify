@@ -5,7 +5,7 @@ module.exports = {
     key: 'css',
     events: [{
         eventName: 'afterBundle',
-        plugin: function(items, config, callback){
+        plugin: function(items, config, ctx, callback){
             async.forEach(items, function(item, done){
                 var source = item.src.toString();
                 item.src = cleanCss.process(source);
