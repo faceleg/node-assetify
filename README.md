@@ -60,6 +60,61 @@ There are some built-in facilities to speed up your development, for instance, y
 You could provide a string, telling assetify where the file is (relative to **source**), for example `/css/ie6-hacks.css`.
 Another option is to provide an object, here you can specify `local` (which is what plain strings convert to), and `profile`, which is the name of the profile you want this file to be included in. `profile` defaults to `undefined`, which means that this asset is used by every profile.
 
+Here is an example configuration module, extracted from **[NBrut]**(https://github.com/bevacqua/NBrut "NBrut Node.JS Blogging Engine").
+
+    var base = __dirname + '/static',
+        assetify = require('node-assetify'),
+        assets = {
+            production: config.env.production,
+            source: base,
+            bin: base + '/bin',
+            css: [
+                '/css/defaults/reset.css',
+                '/css/defaults/elements.css',
+                '/css/defaults/controls.css',
+                '/css/defaults/layout.css',
+                '/css/defaults/design.css',
+                '/css/libs/markdown.css',
+                '/css/libs/prettify.css',
+                '/css/libs/pikaday.css',
+                { profile: 'author', local: '/css/layouts/author.css' },
+                '/css/views/main/entries.css',
+                { profile: 'anon', local: '/css/views/user/register.css' },
+                { profile: 'anon', local: '/css/views/user/login.css' },
+                { profile: 'author', local: '/css/views/author/editor.css' },
+                { profile: 'author', local: '/css/views/author/review.css' }
+            ],
+            js: [
+                assetify.jQuery('1.8.3', '/js/jquery-1.8.3.min.js'),
+                '/js/libs/moment.min.js',
+                '/js/libs/mustache.js',
+                '/js/libs/jquery.textarearesizer.min.js',
+                '/js/libs/Markdown.Converter.js',
+                '/js/libs/Markdown.Sanitizer.js',
+                '/js/libs/Markdown.Editor.js',
+                '/js/libs/prettify.js',
+                '/js/libs/jquery.pikaday.js',
+                '/js/ext/prettify.extensions.js',
+                '/js/nbrut/nbrut.extensions.js',
+                '/js/nbrut/nbrut.core.js',
+                '/js/nbrut/nbrut.md.js',
+                '/js/nbrut/nbrut.ui.js',
+                '/js/nbrut/nbrut.templates.js',
+                '/js/nbrut/nbrut.thin.js',
+                '/js/nbrut/nbrut.init.js',
+                '/js/views/thin.hooks.js',
+                '/js/views/templates.js',
+                { profile: 'anon', local: '/js/views/templates.anon.js' },
+                { profile: 'author', local: '/js/views/templates.author.js'},
+                '/js/views/main/entries.js',
+                '/js/views/main/entry.js',
+                { profile: 'author', local: '/js/views/author/editor.js' },
+                { profile: 'author', local: '/js/views/author/review.js' }
+            ]
+        };
+
+    module.exports = assets;
+
 ## Plugins
 
 TODO
