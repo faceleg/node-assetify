@@ -5,13 +5,13 @@
     "name": "Nicolas Bevacqua",
     "email": "nicolasbevacqua@gmail.com"
   },
-  "version": "0.0.1",
+  "version": "0.0.2",
   "dependencies": {
       "xtend": "1.0.3",
       "fs-extra": "0.3.2",
       "async": "0.1.22",
       "less": "1.3.3",
-      "uglify-js": "2.3.3"
+      "uglify-js": "2.2.3"
   },
   "devDependencies": {
     "vows": "0.5.x",
