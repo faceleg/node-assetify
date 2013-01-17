@@ -1,4 +1,0 @@
-TODO:
-
-- hash concatenated output files like /all.js?_=1239123 for improved caching experience
-- watch files for modifications.
