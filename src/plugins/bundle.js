@@ -22,10 +22,9 @@ module.exports = {
                 bundles = [];
 
             return async.forEach(profiles, function(profile, done){
-                var filename = profile + '.' + ctx.key,
+                var filename = ctx.key + '/' + profile + '.' + ctx.key,
                     bundle = {
                         profile: profile,
-                        local: filename,
                         out: filename,
                         path: path.join(config.bin, filename),
                         sources: []
