@@ -89,7 +89,9 @@ function processLoop(items, key, cb){
 
 function process(items, key, tag, done){
     processLoop(items, key, function(results){
-        config.appendTo[key] = tag(results);
+        config.appendTo[key] = {
+            emit: tag(results)
+        };
         return done();
     });
 }
