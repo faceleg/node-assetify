@@ -35,19 +35,19 @@ var bin = __dirname + '/static/bin',
 "Client-side" **jade** template code:
 
 ```jade
-!=js()
+!=js.emit()
 ```
 
 You could also pass it a _profile name_, to restrict the output to the client:
 
 ```jade
-!=css('mystical')
+!=css.emit('mystical')
 ```
 
 If you don't want to include non-profile-specific scripts, you can do:
 
 ```jade
-!=css('mystical', false)
+!=css.emit('mystical', false)
 ```
 
 There are some built-in facilities to speed up your development, for instance, you can add jQuery's CDN version with a local fallback like this:
