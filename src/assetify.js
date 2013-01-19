@@ -64,7 +64,6 @@ function readFilesAsync(items, cb){
 }
 
 function outputAsync(items, cb){
-
     async.forEach(items, function(item, callback){
         var file = path.join(config.bin, item.out);
         disk.write(file, item.src, callback);
