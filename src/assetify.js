@@ -1,7 +1,7 @@
 var api = {
     compile: require('./compiler.js').compile,
     middleware: require('./middleware.js').initialize,
-    use: pluginFramework.register,
+    use: require('./plugins/framework.js').register,
     plugins: require('./plugins/all.js'),
     jQuery: function(version, local, profile){
         return {

@@ -12,17 +12,16 @@ function localize(req){
     var locals = {};
 
     agnostic.forEach(function(item){
-        locals[item.key] = function(){
-            item.callback(req);
-        };
+        locals[item.key] = item.callback(req);
     });
-
     return locals;
 }
 
-function initialize(req,res,next){
-    res.locals.assetify = localize(req);
-    next();
+function initialize(){
+    return function(req,res,next){
+        res.locals.assetify = localize(req);
+        next();
+    }
 }
 
 module.exports = {
