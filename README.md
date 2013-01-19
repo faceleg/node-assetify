@@ -22,32 +22,37 @@ var bin = __dirname + '/static/bin',
         js: [
             '/js/file.js',
             { profile: 'mystical', local: '/js/admin.js' }
-        ],
-        appendTo: app.locals
+        ]
     }, function(err){
         if(err){
             throw err;
         }
         app.use(connect.static(bin));
+        app.use(assetify.middleware());
     });
 ```
+
+Using the middleware allows **assetify** to do two things:
+
+- Firstly, it allows **assetify** to expose the _emitter_ functions to your views. Allowing you to emit the `<script>` and `<link>` tags _without repeating yourself_.
+- Second, and most importantly, it grants **assetify** access to the web server _request_ objects, letting it manage **dynamic, request-based** inclusion of assets.
 
 "Client-side" **jade** template code:
 
 ```jade
-!=js.emit()
+!=assetify.js()
 ```
 
 You could also pass it a _profile name_, to restrict the output to the client:
 
 ```jade
-!=css.emit('mystical')
+!=assetify.css('mystical')
 ```
 
 If you don't want to include non-profile-specific scripts, you can do:
 
 ```jade
-!=css.emit('mystical', false)
+!=assetify.css('mystical', false)
 ```
 
 There are some built-in facilities to speed up your development, for instance, you can add jQuery's CDN version with a local fallback like this:
@@ -60,7 +65,6 @@ assetify.jQuery('1.8.3', '/js/jquery-1.8.3.min.js')
 
  - **source**: the folder where your static assets are during development.
  - **bin**: the folder where the assets processed by assetify should be placed. this is the folder that should be exposed to the public.
- - **appendTo**: an object where the HTML tag generation functions are appended to. defaults to `global`. common configuration: `app.locals`.
  - **js/css**: expects an array of asset configurations.
 
 ### Asset Configurations
@@ -189,7 +193,6 @@ assetify.use(assetify.plugins.minifyJS);
 A typical configuration might be:
 
 ```javascript
-assets.appendTo = server.locals;
 assetify.use(assetify.plugins.less);
 
 if (config.env.production){
@@ -199,6 +202,8 @@ if (config.env.production){
 }
 
 assetify.compile(assets, configureServer);
+
+app.use(assetify.middleware());
 ```
 
 Please report any [issues](https://github.com/bevacqua/node-assetify/issues "Issue Tracker") you might find.
