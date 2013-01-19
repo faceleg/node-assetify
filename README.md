@@ -68,6 +68,10 @@ assetify.jQuery('1.8.3', '/js/jquery-1.8.3.min.js')
 You could provide a string, telling assetify where the file is (relative to **source**), for example `/css/ie6-hacks.css`.
 Another option is to provide an object, here you can specify `local` (which is what plain strings convert to), and `profile`, which is the name of the profile you want this file to be included in. `profile` defaults to `undefined`, which means that this asset is used by every profile.
 
+You could also just specify the raw source code, instead of giving assetify a file to look at. **Look, ma!**
+
+    { src: 'alert("look ma, no files!");' }
+
 Here is an example configuration module, extracted from [**NBrut**](https://github.com/bevacqua/NBrut "NBrut Node.JS Blogging Engine").
 
 ```javascript

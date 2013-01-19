@@ -1,6 +1,5 @@
 var extend = require('xtend'),
     fs = require('fs'),
-    fse = require('fs-extra'),
     path = require('path'),
     async = require('async'),
     disk = require('./disk.js'),
@@ -11,6 +10,7 @@ var extend = require('xtend'),
         js: [],
         css: []
     },
+    snippets = 0,
     config; // module configuration options
 
 function configure(opts){
@@ -31,6 +31,10 @@ function configure(opts){
     }
 }
 
+function anonymousSnippet(){
+    return '/snippet_' + ++snippets + '.js';
+}
+
 function readFilesAsync(items, cb){
     async.forEach(items, function(source, callback){
         var complex = typeof source === 'object',
@@ -41,6 +45,8 @@ function readFilesAsync(items, cb){
         var i = items.indexOf(source);
         items[i] = item;
 
+        item.out = item.local || anonymousSnippet(); // local is undefined when the asset is source code.
+
         if(item.local !== undefined){ // local might not exist.
             var file = path.join(config.source, item.local);
 
@@ -49,17 +55,19 @@ function readFilesAsync(items, cb){
                     throw err;
                 }
                 item.src = data;
-                item.path = path.join(config.bin, item.local);
-                item.out = item.local; // relative path in the output directory
                 callback(err);
             });
+        }else{
+            callback();
         }
-    }, cb);
+    },cb);
 }
 
 function outputAsync(items, cb){
+
     async.forEach(items, function(item, callback){
-        disk.write(item.path, item.src, callback);
+        var file = path.join(config.bin, item.out);
+        disk.write(file, item.src, callback);
     },function(err){
         if(err){
             throw err;

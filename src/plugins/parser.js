@@ -18,12 +18,11 @@ function getParser(key, extensions, parse){
                 var extOut = '.' + key;
 
                 async.forEach(items, function(item, done){
-                    var extName = path.extname(item.path);
+                    var extName = path.extname(item.out);
 
                     var found = extensions.some(function(ext){
                         if(extName === ext){
                             item.out = replaceExtension(item.out, ext, extOut);
-                            item.path = replaceExtension(item.path, ext, extOut);
 
                             parse(item, config, ctx, done);
                             return true;
