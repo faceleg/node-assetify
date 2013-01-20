@@ -215,6 +215,12 @@ You can also dynamically emit styles or javascript directly in your views, throu
 !=assetify.js.add('alert("foo!");')
 ```
 
-These methods will register those snippets of code on the request that invoked it. The added benefit you get from adding scripts this way, is that assetify will act as what is commonly known as an **script manager**, which is to say: you can add these snippets anywhere on your views or before returning from a controller, but the code will still be emitted _only once_ and only when you invoke the **asset emitter**.
+These methods will register those snippets of code _on the request that invoked it_. The added benefit you get from adding scripts this way, is that assetify will act as what is commonly known as an **script manager**, which is to say: you can add these snippets anywhere on your views or before returning from a controller, but the code will still be emitted _only once_ and only when you invoke the **asset emitter**.
+
+### Dynamics disclaimer
+
+Keep in mind these are processed well _after static assets have been compiled_.
+In order to keep it simple, only **inline assets** are allowed.
+Plugins won't run on dynamic assets.
 
 Please report any [issues](https://github.com/bevacqua/node-assetify/issues "Issue Tracker") you might find.
