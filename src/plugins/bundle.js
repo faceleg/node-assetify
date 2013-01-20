@@ -32,7 +32,7 @@ module.exports = {
 
                 items.forEach(function(item){
                     if(item.profile === undefined || item.profile === profile){
-                        if(item.ext === undefined){
+                        if(item.ext === undefined && item.inline !== true){
                             if(item.src === undefined){
                                 throw new Error('item has no source nor is an external resource');
                             }

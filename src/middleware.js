@@ -1,25 +1,30 @@
 var extend = require('xtend'),
     agnostic = [];
 
-function register(key, cb){
+function register(key, prop, cb){
     agnostic.push({
         key: key,
+        prop: prop,
         callback: cb
     });
 }
 
-function localize(req){
-    var locals = {};
+function localize(locals){
+    var localized = {};
 
     agnostic.forEach(function(item){
-        locals[item.key] = item.callback(req);
+        if (localized[item.key] === undefined){
+            localized[item.key] = {};
+        }
+        localized[item.key][item.prop] = item.callback(locals);
     });
-    return locals;
+
+    return localized;
 }
 
 function initialize(){
     return function(req,res,next){
-        res.locals.assetify = localize(req);
+        res.locals.assetify = localize(res.locals);
         next();
     }
 }

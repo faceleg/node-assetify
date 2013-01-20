@@ -13,4 +13,6 @@ var api = {
     }
 };
 
+require('./dynamic.js').expose();
+
 module.exports = api;

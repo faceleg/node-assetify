@@ -16,11 +16,15 @@ function renderTags(items, opts){
         var external = item.ext !== undefined,
             href = external ? item.ext : item.out;
 
-        if(!external && href.indexOf('/') !== 0){
+        if(item.inline === true){
+            href = undefined;
+        }
+
+        if(href !== undefined && !external && href.indexOf('/') !== 0){
             href = '/' + href;
         }
 
-        var tag = opts.render(href);
+        var tag = opts.render(href, item.src);
         tags.push({ html: tag, profile: item.profile });
 
         (opts.then || function(){})(item, tags);
@@ -42,8 +46,15 @@ function scriptTags(items){
     }
 
     return renderTags(items, {
-        render: function(href){
-            return '<script src="' + href + '"></script>'
+        render: function(href, src){
+            if(href !== undefined){
+                return '<script src="' + href + '"></script>';
+            }else if(src !== undefined){
+                return '<script>' + src + '</script>';
+            }else{
+                console.log('WARN: inline script with undefined source omitted.');
+                return '';
+            }
         },
         then: then
     });
@@ -51,8 +62,15 @@ function scriptTags(items){
 
 function styleTags(items){
     return renderTags(items, {
-        render: function(href){
-            return '<link rel="stylesheet" href="' + href + '">';
+        render: function(href, src){
+            if(href !== undefined){
+                return '<link rel="stylesheet" href="' + href + '"/>';
+            }else if(src !== undefined){
+                return '<style>' + src + '</style>';
+            }else{
+                console.log('WARN: inline style with undefined source omitted.');
+                return '';
+            }
         }
     })
 }

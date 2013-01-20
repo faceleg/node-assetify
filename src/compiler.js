@@ -5,6 +5,7 @@ var extend = require('xtend'),
     disk = require('./disk.js'),
     html = require('./html.js'),
     middleware = require('./middleware.js'),
+    dynamic = require('./dynamic.js'),
     pluginFramework = require('./plugins/framework.js'),
     defaults = {
         js: [],
@@ -45,7 +46,9 @@ function readFilesAsync(items, cb){
         var i = items.indexOf(source);
         items[i] = item;
 
-        item.out = item.local || anonymousSnippet(); // local is undefined when the asset is source code.
+        if (item.inline !== true){
+            item.out = item.local || anonymousSnippet();
+        }
 
         if(item.local !== undefined){ // local might not exist.
             var file = path.join(config.source, item.local);
@@ -65,8 +68,12 @@ function readFilesAsync(items, cb){
 
 function outputAsync(items, cb){
     async.forEach(items, function(item, callback){
-        var file = path.join(config.bin, item.out);
-        disk.write(file, item.src, callback);
+        if(item.inline !== true){ // don't write files for inline scripts
+            var file = path.join(config.bin, item.out);
+            disk.write(file, item.src, callback);
+        }else{
+            callback();
+        }
     },function(err){
         if(err){
             throw err;
@@ -96,8 +103,14 @@ function processLoop(items, key, cb){
 
 function process(items, key, tag, done){
     processLoop(items, key, function(results){
-        middleware.register(key, function(req){
-            return tag(results);
+        middleware.register(key, 'emit', function(locals){
+            return function(profile, includeCommon){
+                var dyn = dynamic.process(key, locals),
+                    all = results.concat(dyn),
+                    internal = tag(all);
+
+                return internal(profile, includeCommon);
+            }
         });
         return done();
     });

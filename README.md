@@ -40,19 +40,19 @@ Using the middleware allows **assetify** to do two things:
 "Client-side" **jade** template code:
 
 ```jade
-!=assetify.js()
+!=assetify.js.emit()
 ```
 
 You could also pass it a _profile name_, to restrict the output to the client:
 
 ```jade
-!=assetify.css('mystical')
+!=assetify.css.emit('mystical')
 ```
 
 If you don't want to include non-profile-specific scripts, you can do:
 
 ```jade
-!=assetify.css('mystical', false)
+!=assetify.css.emit('mystical', false)
 ```
 
 There are some built-in facilities to speed up your development, for instance, you can add jQuery's CDN version with a local fallback like this:
@@ -205,5 +205,16 @@ assetify.compile(assets, configureServer);
 
 app.use(assetify.middleware());
 ```
+
+## Dynamics
+
+You can also dynamically emit styles or javascript directly in your views, through:
+
+```jade
+!=assetify.css.add('.test { color:#f00; }')
+!=assetify.js.add('alert("foo!");')
+```
+
+These methods will register those snippets of code on the request that invoked it. The added benefit you get from adding scripts this way, is that assetify will act as what is commonly known as an **script manager**, which is to say: you can add these snippets anywhere on your views or before returning from a controller, but the code will still be emitted _only once_ and only when you invoke the **asset emitter**.
 
 Please report any [issues](https://github.com/bevacqua/node-assetify/issues "Issue Tracker") you might find.
