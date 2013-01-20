@@ -76,6 +76,8 @@ You could also just specify the raw source code, instead of giving assetify a fi
 
     { src: 'alert("look ma, no files!");' }
 
+Assetify will still compile this into a file, if you don't want this, or if you want a file to be inlined for some awkward reason, you can use the `inline: true` option. Note that **this will prevent bundling from happening on that asset**, so you might _prefer_ to set `inline: true` only if you're running on the _development_ environment.
+
 Here is an example configuration module, extracted from [**NBrut**](https://github.com/bevacqua/NBrut "NBrut Node.JS Blogging Engine").
 
 ```javascript
