@@ -228,3 +228,5 @@ In order to keep it simple, only **inline assets** are allowed.
 Plugins won't run on dynamic assets.
 
 Please report any [issues](https://github.com/bevacqua/node-assetify/issues "Issue Tracker") you might find.
+
+You can read my [**introduction to node assetify**](http://www.ponyfoo.com/2013/01/18/asset-management-in-node "Introducing node-assetify") on my blog.
