@@ -5,7 +5,7 @@
     "name": "Nicolas Bevacqua",
     "email": "nicolasbevacqua@gmail.com"
   },
-  "version": "0.0.9",
+  "version": "0.0.10",
   "dependencies": {
       "xtend": "1.0.3",
       "fs-extra": "0.3.2",
@@ -15,7 +15,7 @@
       "clean-css": "0.9.1",
       "uglify-js": "2.2.3",
       "coffee-script": "1.4.0",
-      "jsn": "0.0.2"
+      "jsn": "0.0.3"
   },
   "devDependencies": {
     "vows": "0.5.x",
