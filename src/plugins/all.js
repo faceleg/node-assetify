@@ -5,5 +5,6 @@ module.exports = {
     coffee: require('./coffee.js'),
     jsn: require('./jsn.js'),
     minifyCSS: require('./minify-css.js'),
-    minifyJS: require('./minify-js.js')
+    minifyJS: require('./minify-js.js'),
+    forward: require('./forward.js')
 };

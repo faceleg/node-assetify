@@ -9,7 +9,8 @@ var extend = require('xtend'),
     pluginFramework = require('./plugins/framework.js'),
     defaults = {
         js: [],
-        css: []
+        css: [],
+        misc: []
     },
     snippets = 0,
     config; // module configuration options
@@ -102,6 +103,10 @@ function processLoop(items, key, cb){
 }
 
 function process(items, key, tag, done){
+    if(items === undefined || items.length === 0){
+        return done();
+    }
+
     processLoop(items, key, function(results){
         middleware.register(key, 'emit', function(locals){
             return function(profile, includeCommon){
@@ -121,7 +126,7 @@ function compile(opts, cb){
 
     async.parallel([
         async.apply(process, config.js, 'js', html.scriptTags),
-        async.apply(process, config.css, 'css', html.styleTags)
+        async.apply(process, config.css, 'css', html.styleTags),
     ], cb);
 
     return config.bin;
