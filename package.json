@@ -15,7 +15,8 @@
       "clean-css": "0.9.1",
       "uglify-js": "2.2.3",
       "coffee-script": "1.4.0",
-      "jsn": "0.0.3"
+      "jsn": "0.0.3",
+      "walk": "2.2.1"
   },
   "devDependencies": {
     "vows": "0.5.x",

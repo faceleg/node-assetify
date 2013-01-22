@@ -44,6 +44,8 @@ function readFilesAsync(items, cb){
                 local: source
             };
 
+        item.locals = [item.local];
+
         var i = items.indexOf(source);
         items[i] = item;
 

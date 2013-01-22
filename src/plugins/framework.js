@@ -1,4 +1,5 @@
-var async = require('async'),
+var extend = require('xtend'),
+    async = require('async'),
     registry = {};
 
 function ensurePlugins(key, eventName){
@@ -16,17 +17,21 @@ function getPlugins(key, eventName){
     return specific.concat(shared);
 }
 
-function addPlugin(key, eventName, plugin){
+function addPlugin(key, eventName, plugin, opts){
     var plugins = ensurePlugins(key, eventName);
-    plugins.push(plugin);
+    plugins.push({
+        plugin: plugin,
+        opts: opts
+    });
 }
 
 function raise(key, eventName, items, config, ctx, done){
     var plugins = getPlugins(key, eventName),
         tasks = [];
 
-    plugins.forEach(function(plugin){
-        tasks.push(async.apply(plugin, items, config, ctx));
+    plugins.forEach(function(e){
+        ctx.opts = e.opts;
+        tasks.push(async.apply(e.plugin, items, config, ctx));
     });
 
     async.series(tasks, function(err){
@@ -37,13 +42,13 @@ function raise(key, eventName, items, config, ctx, done){
     });
 }
 
-function register(key, eventName, plugin){
+function register(key, eventName, plugin, opts){
     if(typeof key === 'object'){
-        key.events.forEach(function(opts){
-            register(key.key, opts.eventName, opts.plugin);
+        key.events.forEach(function(e){
+            register(key.key, e.eventName, e.plugin, e.opts);
         });
     }else{
-        addPlugin(key, eventName, plugin);
+        addPlugin(key, eventName, plugin, opts);
     }
 }
 
