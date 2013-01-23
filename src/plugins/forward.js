@@ -1,5 +1,6 @@
 var async = require('async'),
-    path = require('path');
+    path = require('path'),
+    disk = require('../disk.js');
 
 function plugin(items, config, ctx, callback){
     if (config.__forwarded === true){ // sanity
@@ -22,29 +23,67 @@ function plugin(items, config, ctx, callback){
     });
 
     walker.on('end', function() {
-        async.forEach(files, forwardFile,function(err){
+        async.forEach(files, function(file, done){
+            forwardFile(file, config, done);
+        },function(err){
             if(err){
                 throw err;
             }
-            console.log(files);
-            // TODO: actually forward these to the out folder, exact same place.
-            // TODO: what happens when bundling, how to figure out target path?
-            // TODO maybe: look up in locals arrays.
             callback();
         });
     });
 }
 
-function forwardFile(file, done){
-    done();
+/* if e.g: '/css/fonty/fonts.css' is an input location with a different out location,
+ * then forward stuff like '/css/fonty/font.ttf' to that same output folder
+ * this will prevent issues in relative paths when assets are bundled together.
+ */
+function fixTargetForAssetifiedFolders(relative, target, config){
+    var assets = config.js.concat(config.css);
+
+    assets.some(function(asset){
+        return asset.locals.some(function(local){
+            var localdir = path.dirname(path.normalize(local.substr(1))),
+                relativedir = path.dirname(path.normalize(relative)),
+                match = localdir === relativedir;
+
+            if (match){
+                var dirname = path.dirname(asset.out),
+                    basename = path.basename(target);
+
+                target = path.join(config.bin, dirname, basename);
+            }
+            return match;
+        });
+    });
+
+    return target;
 }
 
-module.exports = {
-    events: [{
-        eventName: 'afterBundle',
-        plugin: plugin,
-        opts: { // TODO: become a function to allow custom opts.
-            extnames: ['.png', '.gif', '.jpg', '.jpeg']
-        }
-    }]
+function forwardFile(file, config, done){
+    var relative = path.relative(config.source, file),
+        target = path.join(config.bin, relative),
+        fixed = fixTargetForAssetifiedFolders(relative, target, config);
+
+    disk.copySafe(file, fixed, done);
+}
+
+module.exports = function(opts, concatenate){
+    var eventOpts = {
+        extnames: ['.ico', '.png', '.gif', '.jpg', '.jpeg']
+    };
+
+    if(concatenate === true){
+        eventOpts.extnames = eventOpts.extnames.concat(opts.extnames || []);
+    }else if(opts !== undefined){
+        eventOpts = opts;
+    }
+
+    return {
+        events: [{
+            eventName: 'afterBundle',
+            plugin: plugin,
+            opts: eventOpts
+        }]
+    };
 };
