@@ -3,7 +3,8 @@
   "description": "Node client-side asset manager tool",
   "author": {
     "name": "Nicolas Bevacqua",
-    "email": "nicolasbevacqua@gmail.com"
+    "email": "nicolasbevacqua@gmail.com",
+    "url": "http://www.ponyfoo.com"
   },
   "version": "0.0.11-pre",
   "dependencies": {
