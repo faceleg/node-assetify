@@ -75,7 +75,7 @@ module.exports = function(opts, concatenate){
 
     if(concatenate === true){
         eventOpts.extnames = eventOpts.extnames.concat(opts.extnames || []);
-    }else{
+    }else if(opts !== undefined){
         eventOpts = opts;
     }
 

@@ -5,7 +5,7 @@
     "name": "Nicolas Bevacqua",
     "email": "nicolasbevacqua@gmail.com"
   },
-  "version": "0.0.11",
+  "version": "0.0.12",
   "dependencies": {
       "xtend": "1.0.3",
       "fs-extra": "0.3.2",
