@@ -1,8 +1,8 @@
-# [node-assetify](https://npmjs.org/package/node-assetify "node-assetify on npmjs") [![Build Status](https://travis-ci.org/bevacqua/node-assetify.png?branch=master)](https://travis-ci.org/bevacqua/node-assetify)
+# [assetify](https://npmjs.org/package/assetify "assetify on npmjs") [![Build Status](https://travis-ci.org/bevacqua/node-assetify.png?branch=master)](https://travis-ci.org/bevacqua/node-assetify)
 
-**node-assetify** is an open-source client-side asset manager for **Node.JS** web applications.
+**assetify** is an open-source client-side asset manager for **Node.JS** web applications.
 
-## Why node-assetify?
+## Why assetify?
 
 When I started developing on **Node.JS**, I didn't feel comfortable enough with any client-side asset manager, so I decided to roll my own.
 
@@ -10,7 +10,7 @@ When I started developing on **Node.JS**, I didn't feel comfortable enough with 
 
 Fetch from **npm**
 
-    npm install node-assetify
+    npm install assetify
 
 Server-side:
 
@@ -82,7 +82,7 @@ Here is an example configuration module, extracted from [**NBrut**](https://gith
 
 ```javascript
 var base = __dirname + '/static',
-    assetify = require('node-assetify'),
+    assetify = require('assetify'),
     assets = {
         source: base,
         bin: base + '/bin',
@@ -136,7 +136,7 @@ module.exports = assets;
 
 ## Plugins
 
-You can hook into node-assetify through plugins. There are a few events that are raised during the assetify process.
+You can hook into assetify through plugins. There are a few events that are raised during the assetify process.
 
 - **afterReadFile**: Raised after, you guessed it, all files have been read from disk into memory. Useful for _pre-processing_ like **LESS** parsing.
 - **beforeBundle**: Raised before files are bundled together into profiles. Useful for _actually bundling_ (which is a plugin in itself).
@@ -174,7 +174,7 @@ As mentioned earlier, a `bundle` plugin is available to allow you to concatenate
 assetify.use(assetify.plugins.bundle);
 ```
 
-node-assetify comes with a **LESS** parsing plugin out of the box, which you can configure by invoking:
+assetify comes with a **LESS** parsing plugin out of the box, which you can configure by invoking:
 
 ```javascript
 assetify.use(assetify.plugins.less);
