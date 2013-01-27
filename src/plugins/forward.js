@@ -42,7 +42,6 @@ function fixTargetForAssetifiedFolders(relative, target, config, ctx){
     var assets = config[ctx.key];
 
     assets.some(function(asset){
-        console.log(assets);
         return asset.locals.some(function(local){
             var localdir = path.dirname(path.normalize(local.substr(1))),
                 relativedir = path.dirname(path.normalize(relative)),

@@ -6,7 +6,7 @@
     "email": "nicolasbevacqua@gmail.com",
     "url": "http://www.ponyfoo.com"
   },
-  "version": "0.1.0",
+  "version": "0.1.1",
   "dependencies": {
       "xtend": "1.0.3",
       "fs-extra": "0.3.2",
