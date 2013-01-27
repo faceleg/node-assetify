@@ -89,7 +89,6 @@ function processLoop(items, key, cb){
     var ctx = { key: key };
 
     async.series([
-        async.apply(disk.removeSafe, config.bin),
         async.apply(readFilesAsync, items),
         async.apply(pluginFramework.raise, key, 'afterReadFile', items, config, ctx),
         async.apply(pluginFramework.raise, key, 'beforeBundle', items, config, ctx),
@@ -104,9 +103,10 @@ function processLoop(items, key, cb){
     });
 }
 
-function process(items, key, tag, done){
-    if(items === undefined || items.length === 0){
-        return done();
+function compileInternal(items, key, tag, done){
+    if(items === undefined){
+        process.nextTick(done);
+        return;
     }
 
     processLoop(items, key, function(results){
@@ -119,17 +119,19 @@ function process(items, key, tag, done){
                 return internal(profile, includeCommon);
             }
         });
-        return done();
+        done();
     });
 }
 
 function compile(opts, cb){
     configure(opts);
 
-    async.parallel([
-        async.apply(process, config.js, 'js', html.scriptTags),
-        async.apply(process, config.css, 'css', html.styleTags),
-    ], cb);
+    disk.removeSafe(config.bin, function(){
+        async.parallel([
+            async.apply(compileInternal, config.js, 'js', html.scriptTags),
+            async.apply(compileInternal, config.css, 'css', html.styleTags)
+        ], cb);
+    });
 
     return config.bin;
 }

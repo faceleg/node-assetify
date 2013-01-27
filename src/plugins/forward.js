@@ -24,7 +24,7 @@ function plugin(items, config, ctx, callback){
 
     walker.on('end', function() {
         async.forEach(files, function(file, done){
-            forwardFile(file, config, done);
+            forwardFile(file, config, ctx, done);
         },function(err){
             if(err){
                 throw err;
@@ -38,10 +38,11 @@ function plugin(items, config, ctx, callback){
  * then forward stuff like '/css/fonty/font.ttf' to that same output folder
  * this will prevent issues in relative paths when assets are bundled together.
  */
-function fixTargetForAssetifiedFolders(relative, target, config){
-    var assets = config.js.concat(config.css);
+function fixTargetForAssetifiedFolders(relative, target, config, ctx){
+    var assets = config[ctx.key];
 
     assets.some(function(asset){
+        console.log(assets);
         return asset.locals.some(function(local){
             var localdir = path.dirname(path.normalize(local.substr(1))),
                 relativedir = path.dirname(path.normalize(relative)),
@@ -60,10 +61,10 @@ function fixTargetForAssetifiedFolders(relative, target, config){
     return target;
 }
 
-function forwardFile(file, config, done){
+function forwardFile(file, config, ctx, done){
     var relative = path.relative(config.source, file),
         target = path.join(config.bin, relative),
-        fixed = fixTargetForAssetifiedFolders(relative, target, config);
+        fixed = fixTargetForAssetifiedFolders(relative, target, config, ctx);
 
     disk.copySafe(file, fixed, done);
 }
