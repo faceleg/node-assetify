@@ -1,30 +1,19 @@
 var async = require('async'),
     path = require('path');
 
-function profileNamesDistinct(items){
-    var names = [undefined];
-    items.forEach(function(item){
-        if (names.indexOf(item.profile) === -1){
-            names.push(item.profile);
-        }
-    });
-    if(names.length > 1){ // if using profiles, don't save a common profile.
-        return names.slice(1);
-    }
-    return names;
-}
-
 module.exports = {
     events: [{
         eventName: 'beforeBundle',
         plugin: function(items, config, ctx, callback){
-            var profiles = profileNamesDistinct(items),
-                bundles = [];
+            if (config.profiles === undefined){
+                config.profiles = ['all']
+            }
+            var bundles = [];
 
-            return async.forEach(profiles, function(profile, done){
+            return async.forEach(config.profiles, function(profile, done){
                 var filename = ctx.key + '/' + profile + '.' + ctx.key,
                     bundle = {
-                        profile: profile,
+                        profile: [profile],
                         out: filename,
                         path: path.join(config.bin, filename),
                         locals: [],
@@ -32,7 +21,7 @@ module.exports = {
                     };
 
                 items.forEach(function(item){
-                    if(item.profile === undefined || item.profile === profile){
+                    if(item.profile === undefined || item.profile.indexOf(profile) !== -1 || profile === 'all'){
                         if(item.ext === undefined && item.inline !== true){
                             if(item.src === undefined){
                                 throw new Error('item has no source nor is an external resource');

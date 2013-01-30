@@ -43,7 +43,7 @@ Using the middleware allows **assetify** to do two things:
 !=assetify.js.emit()
 ```
 
-You could also pass it a _profile name_, to restrict the output to the client:
+You could also pass it a _profile name_ (or an array of profile names), to restrict the output to the client:
 
 ```jade
 !=assetify.css.emit('mystical')
@@ -66,11 +66,12 @@ assetify.jQuery('1.8.3', '/js/jquery-1.8.3.min.js')
  - **source**: the folder where your static assets are during development.
  - **bin**: the folder where the assets processed by assetify should be placed. this is the folder that should be exposed to the public.
  - **js/css**: expects an array of asset configurations.
+ - **profiles**: an array of profiles to output when bundling.
 
 ### Asset Configurations
 
 You could provide a string, telling assetify where the file is (relative to **source**), for example `/css/ie6-hacks.css`.
-Another option is to provide an object, here you can specify `local` (which is what plain strings convert to), and `profile`, which is the name of the profile you want this file to be included in. `profile` defaults to `undefined`, which means that this asset is used by every profile.
+Another option is to provide an object, here you can specify `local` (which is what plain strings convert to), and `profile`, which is the name (or names, in an array) of the profile(s) you want this file to be included in. `profile` defaults to `undefined`, which means that this asset is used by every profile.
 
 You could also just specify the raw source code, instead of giving assetify a file to look at. **Look, ma!**
 

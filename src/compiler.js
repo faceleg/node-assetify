@@ -46,6 +46,10 @@ function readFilesAsync(items, cb){
 
         item.locals = [item.local];
 
+        if(typeof item.profile === 'string'){
+            item.profile = [item.profile];
+        }
+
         var i = items.indexOf(source);
         items[i] = item;
 
