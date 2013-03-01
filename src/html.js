@@ -2,7 +2,7 @@ function profile(tags){
     return function(key, includeCommon){
         var results = [];
         tags.forEach(function(tag){
-            if((tag.profile === undefined && includeCommon !== false) || 
+            if((tag.profile === undefined && includeCommon !== false) ||
                (tag.profile !== undefined && tag.profile.indexOf(key) !== -1)){
                 results.push(tag.html);
             }
