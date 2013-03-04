@@ -3,7 +3,7 @@ function profile(tags){
         var results = [];
         tags.forEach(function(tag){
             if((tag.profile === undefined && includeCommon !== false) ||
-               (tag.profile !== undefined && tag.profile.indexOf(key) !== -1)){
+                (tag.profile !== undefined && tag.profile.indexOf(key) !== -1)){
                 results.push(tag.html);
             }
         });
@@ -21,7 +21,7 @@ function renderTags(items, opts){
             href = undefined;
         }
 
-        if(href !== undefined && !external && href.indexOf('/') !== 0){
+        if (href !== undefined && !/^https?:\/\//.test(href) && href.indexOf('/') !== 0){
             href = '/' + href;
         }
 
