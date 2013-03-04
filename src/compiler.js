@@ -117,7 +117,7 @@ function compileInternal(items, key, tag, done){
         middleware.register(key, 'emit', function(locals){
             return function(profile, includeCommon){
                 var dyn = dynamic.process(key, locals),
-                    all = results.concat(dyn),
+                    all = dyn.before.concat(results).concat(dyn.after),
                     internal = tag(all);
 
                 return internal(profile, includeCommon);
