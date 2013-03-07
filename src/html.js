@@ -27,7 +27,7 @@ function renderTags(items, opts){
             href = '/' + href;
         }
 
-        var tag = opts.render(href, item.src);
+        var tag = opts.render((opts.host || '') + href, item.src);
         tags.push({ html: tag, profile: item.profile });
 
         (opts.then || function(){})(item, tags);
@@ -36,7 +36,7 @@ function renderTags(items, opts){
     return profile(tags);
 }
 
-function scriptTags(items){
+function scriptTags(items, config){
     function then(item, tags){
         if(item.ext !== undefined && item.out !== undefined){
             if(item.test === undefined){
@@ -49,6 +49,7 @@ function scriptTags(items){
     }
 
     return renderTags(items, {
+        host: config.host,
         render: function(href, src){
             if(href !== undefined){
                 return '<script src="' + href + '"></script>';
@@ -63,8 +64,9 @@ function scriptTags(items){
     });
 }
 
-function styleTags(items){
+function styleTags(items, config){
     return renderTags(items, {
+        host: config.host,
         render: function(href, src){
             if(href !== undefined){
                 return '<link rel="stylesheet" href="' + href + '"/>';

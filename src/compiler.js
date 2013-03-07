@@ -123,7 +123,7 @@ function compileInternal(items, key, tag, done){
                 cb(null, function(profile, includeCommon){
                     var dyn = dynamic.process(key, req, res),
                         all = dyn.before.concat(results).concat(dyn.after),
-                        internal = tag(all);
+                        internal = tag(all, config);
 
                     return internal(profile, includeCommon);
                 });

@@ -67,6 +67,7 @@ assetify.jQuery('1.8.3', '/js/jquery-1.8.3.min.js')
  - **bin**: the folder where the assets processed by assetify should be placed. this is the folder that should be exposed to the public.
  - **js/css**: expects an array of asset configurations.
  - **profiles**: an array of profiles to output when bundling. defaults to ['all']
+ - **host**: allows you to pick a host for an absolute uri, this is prepended to asset urls.
 
 ### Asset Configurations
 
