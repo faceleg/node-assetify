@@ -1,9 +1,11 @@
 function profile(tags){
     return function(key, includeCommon){
-        var results = [];
+        var profile = key || 'all',
+            results = [];
+
         tags.forEach(function(tag){
             if((tag.profile === undefined && includeCommon !== false) ||
-                (tag.profile !== undefined && tag.profile.indexOf(key) !== -1)){
+                (tag.profile !== undefined && tag.profile.indexOf(profile) !== -1)){
                 results.push(tag.html);
             }
         });
