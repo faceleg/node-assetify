@@ -6,5 +6,6 @@ module.exports = {
     jsn: require('./jsn.js'),
     minifyCSS: require('./minify-css.js'),
     minifyJS: require('./minify-js.js'),
-    forward: require('./forward.js')
+    forward: require('./forward.js'),
+    fingerprint: require('./fingerprint.js')
 };

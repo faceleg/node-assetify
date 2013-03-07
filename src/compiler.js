@@ -1,6 +1,7 @@
 var extend = require('xtend'),
     fs = require('fs'),
     path = require('path'),
+    sync = require('sync'),
     async = require('async'),
     disk = require('./disk.js'),
     html = require('./html.js'),
@@ -68,6 +69,7 @@ function readFilesAsync(items, cb){
                 callback(err);
             });
         }else{
+            item.src = ''; // sanity
             callback();
         }
     },cb);
@@ -103,7 +105,7 @@ function processLoop(items, key, cb){
         if(err){
             throw err;
         }
-        cb(items);
+        cb(items, ctx);
     });
 }
 
@@ -113,16 +115,23 @@ function compileInternal(items, key, tag, done){
         return;
     }
 
-    processLoop(items, key, function(results){
-        middleware.register(key, 'emit', function(locals){
-            return function(profile, includeCommon){
-                var dyn = dynamic.process(key, locals),
-                    all = dyn.before.concat(results).concat(dyn.after),
-                    internal = tag(all);
+    processLoop(items, key, function(results, ctx){
+            middleware.register(key, 'emit', function(req, res){
+                return function(profile, includeCommon){
+                    var dyn = dynamic.process(key, req, res),
+                        all = dyn.before.concat(results).concat(dyn.after),
+                        internal;
 
-                return internal(profile, includeCommon);
-            }
-        });
+                    ctx.http = { req: req, res: res };
+
+                    sync(function(){
+                        pluginFramework.raise.sync(null, key, 'beforeRender', all, config, ctx);
+                    });
+
+                    internal = tag(all);
+                    return internal(profile, includeCommon);
+                }
+            });
         done();
     });
 }

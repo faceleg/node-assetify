@@ -9,14 +9,14 @@ function register(key, prop, cb){
     });
 }
 
-function localize(locals){
+function localize(req, res){
     var localized = {};
 
     agnostic.forEach(function(item){
         if (localized[item.key] === undefined){
             localized[item.key] = {};
         }
-        localized[item.key][item.prop] = item.callback(locals);
+        localized[item.key][item.prop] = item.callback(req, res);
     });
 
     return localized;
@@ -24,7 +24,7 @@ function localize(locals){
 
 function initialize(){
     return function(req,res,next){
-        res.locals.assetify = localize(res.locals);
+        res.locals.assetify = localize(req, res);
         next();
     }
 }
