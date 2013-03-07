@@ -11,7 +11,8 @@ var extend = require('xtend'),
     defaults = {
         js: [],
         css: [],
-        misc: []
+        misc: [],
+        host: ''
     },
     snippets = 0,
     config; // module configuration options

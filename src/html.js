@@ -23,11 +23,14 @@ function renderTags(items, opts){
             href = undefined;
         }
 
-        if (href !== undefined && !/^https?:\/\//.test(href) && href.indexOf('/') !== 0){
-            href = '/' + href;
+        if (href !== undefined){
+            if(!/^https?:\/\//.test(href) && href.indexOf('/') !== 0){
+                href = '/' + href;
+            }
+            href = opts.host + href;
         }
 
-        var tag = opts.render((opts.host || '') + href, item.src);
+        var tag = opts.render(href, item.src);
         tags.push({ html: tag, profile: item.profile });
 
         (opts.then || function(){})(item, tags);
