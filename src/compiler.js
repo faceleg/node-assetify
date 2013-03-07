@@ -116,22 +116,19 @@ function compileInternal(items, key, tag, done){
     }
 
     processLoop(items, key, function(results, ctx){
-            middleware.register(key, 'emit', function(req, res){
-                return function(profile, includeCommon){
+        middleware.register(key, 'emit', function(req, res, cb){
+            ctx.http = { req: req, res: res };
+
+            pluginFramework.raise(key, 'beforeRender', results, config, ctx, function(){
+                cb(null, function(profile, includeCommon){
                     var dyn = dynamic.process(key, req, res),
                         all = dyn.before.concat(results).concat(dyn.after),
-                        internal;
+                        internal = tag(all);
 
-                    ctx.http = { req: req, res: res };
-
-                    sync(function(){
-                        pluginFramework.raise.sync(null, key, 'beforeRender', all, config, ctx);
-                    });
-
-                    internal = tag(all);
                     return internal(profile, includeCommon);
-                }
+                });
             });
+        });
         done();
     });
 }

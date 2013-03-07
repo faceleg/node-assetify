@@ -143,6 +143,7 @@ You can hook into assetify through plugins. There are a few events that are rais
 - **beforeBundle**: Raised before files are bundled together into profiles. Useful for _actually bundling_ (which is a plugin in itself).
 - **afterBundle**: Raised after files are bundled together into profiles. Useful for _minification_.
 - **afterOutput**: Raised after files are copied to the final destinations. Useful for _post-processing_, like licensing comments.
+- **beforeRender**: Raised on every request, before the assets are included in the locals object. Useful for hashing and fingerprinting. `ctx` will contain `http` with both the `req` and `res` objects.
 
 To configure a plugin, you must add it **before** calling `assetify.compile`. These can be added in two ways. The simpler way is:
 
@@ -166,6 +167,10 @@ assetify.use({
     }]
 });
 ```
+
+**NOTICE:** Keep in mind that the assetify middleware will **synchronize** your **beforeRender** plugins. So keep that in mind when considering performance of custom plugins.
+
+
 
 ### Out of the box
 

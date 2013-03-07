@@ -15,13 +15,14 @@ function process(key, req, res){
             }
         }
     });
+
     return dynamics;
 }
 
 function register(key){
-    middleware.register(key, 'add', function(req, res){
+    middleware.register(key, 'add', function(req, res, done){
         var locals = res.locals;
-        return function(src, placement){
+        done(null, function(src, placement){
             if (locals.assetify.__dynamicStore === undefined){
                 locals.assetify.__dynamicStore = [];
             }
@@ -30,7 +31,7 @@ function register(key){
                 src: src,
                 placement: placement
             });
-        };
+        });
     });
 }
 

@@ -1,4 +1,5 @@
 var extend = require('xtend'),
+    sync = require('sync'),
     agnostic = [];
 
 function register(key, prop, cb){
@@ -16,7 +17,7 @@ function localize(req, res){
         if (localized[item.key] === undefined){
             localized[item.key] = {};
         }
-        localized[item.key][item.prop] = item.callback(req, res);
+        localized[item.key][item.prop] = item.callback.sync(null, req, res);
     });
 
     return localized;
@@ -24,8 +25,12 @@ function localize(req, res){
 
 function initialize(){
     return function(req,res,next){
-        res.locals.assetify = localize(req, res);
-        next();
+        sync(function(){
+            return localize(req, res);
+        },function(err, localized){
+            res.locals.assetify = localized;
+            next();
+        });
     }
 }
 
