@@ -9,7 +9,9 @@ module.exports = {
                 throw new Error('You forgot to add the static-asset middleware to your application, it is necessary for this plugin to work.');
             }
             (items || []).forEach(function(item){
-                item.out = ctx.http.req.assetFingerprint(item.out);
+                if (item.out){ // sanity
+                    item.out = ctx.http.req.assetFingerprint(item.out);
+                }
             });
             done();
         }
