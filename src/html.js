@@ -1,3 +1,5 @@
+var url = require('url');
+
 function profile(tags){
     return function(key, includeCommon){
         var profile = key || 'all',
@@ -27,7 +29,9 @@ function renderTags(items, opts){
             if(!/^https?:\/\//.test(href) && href.indexOf('/') !== 0){
                 href = '/' + href;
             }
-            href = opts.host + href;
+            if(!external){
+                href = url.resolve(opts.config.host, href);
+            }
         }
 
         var tag = opts.render(href, item.src);
@@ -45,14 +49,18 @@ function scriptTags(items, config){
             if(item.test === undefined){
                 throw new Error('fallback test is missing');
             }
-            var code = item.test + ' || document.write(unescape("%3Cscript src=\'' + item.out + '\'%3E%3C/script%3E"))';
-            var fallback = '<script>' + code +  '</script>';
+            var open = ' || document.write(unescape("%3Cscript src=\'',
+                close = '\'%3E%3C/script%3E"))',
+                it = url.resolve(config.host, item.out),
+                code = item.test + open + it + close,
+                fallback = '<script>' + code +  '</script>';
+
             tags.push({ html: fallback, profile: item.profile });
         }
     }
 
     return renderTags(items, {
-        host: config.host,
+        config: config,
         render: function(href, src){
             if(href !== undefined){
                 return '<script src="' + href + '"></script>';
@@ -69,7 +77,7 @@ function scriptTags(items, config){
 
 function styleTags(items, config){
     return renderTags(items, {
-        host: config.host,
+        config: config,
         render: function(href, src){
             if(href !== undefined){
                 return '<link rel="stylesheet" href="' + href + '"/>';
