@@ -6,7 +6,7 @@
     "email": "nicolasbevacqua@gmail.com",
     "url": "http://www.ponyfoo.com"
   },
-  "version": "0.1.5",
+  "version": "0.1.5b",
   "dependencies": {
     "xtend": "1.0.3",
     "fs-extra": "0.3.2",
@@ -18,8 +18,7 @@
     "coffee-script": "1.4.0",
     "jsn": "0.0.3",
     "walk": "2.2.1",
-    "static-asset": "~0.5.2",
-    "sync": "~0.2.2"
+    "static-asset": "~0.5.2"
   },
   "devDependencies": {
     "vows": "0.5.x",

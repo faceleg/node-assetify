@@ -1,7 +1,6 @@
 var extend = require('xtend'),
     fs = require('fs'),
     path = require('path'),
-    sync = require('sync'),
     async = require('async'),
     disk = require('./disk.js'),
     html = require('./html.js'),
@@ -117,18 +116,20 @@ function compileInternal(items, key, tag, done){
     }
 
     processLoop(items, key, function(results, ctx){
-        middleware.register(key, 'emit', function(req, res, cb){
+        middleware.register(key, 'emit', function(req, res){
             ctx.http = { req: req, res: res };
 
-            pluginFramework.raise(key, 'beforeRender', results, config, ctx, function(){
-                cb(null, function(profile, includeCommon){
-                    var dyn = dynamic.process(key, req, res),
-                        all = dyn.before.concat(results).concat(dyn.after),
-                        internal = tag(all, config);
+            // NOTE: beforeRender plugins _must_ be synchronous
+            // in order to make an impact on the request object
+            pluginFramework.raise(key, 'beforeRender', results, config, ctx, function(){});
 
-                    return internal(profile, includeCommon);
-                });
-            });
+            return function(profile, includeCommon){
+                var dyn = dynamic.process(key, req, res),
+                    all = dyn.before.concat(results).concat(dyn.after),
+                    internal = tag(all, config);
+
+                return internal(profile, includeCommon);
+            };
         });
         done();
     });

@@ -169,7 +169,7 @@ assetify.use({
 });
 ```
 
-**NOTICE:** Keep in mind that the assetify middleware will **synchronize** your **beforeRender** plugins. So keep that in mind when considering performance of custom plugins.
+**NOTICE:** Your **beforeRender** plugins _must_ be synchronous, otherwise they won't work at all.
 
 
 
