@@ -51,6 +51,10 @@ function readFilesAsync(items, cb){
             item.profile = [item.profile];
         }
 
+        if (item.profile !== undefined){
+            item.profile = Array.prototype.concat.apply([], item.profile); // copy it
+        }
+
         var i = items.indexOf(source);
         items[i] = item;
 
