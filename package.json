@@ -24,8 +24,7 @@
     "grunt": "~0.4.1",
     "grunt-cli": "~0.1.6",
     "grunt-contrib-jshint": "~0.1.1",
-    "grunt-jasmine-node": "0.0.6",
-    "jasmine-node": "~1.4.0"
+    "grunt-jasmine-node": "0.0.6"
   },
   "repository": {
     "type": "git",
