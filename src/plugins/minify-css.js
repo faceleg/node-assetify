@@ -1,3 +1,5 @@
+'use strict';
+
 var async = require('async'),
     cleanCss = require('clean-css');
 

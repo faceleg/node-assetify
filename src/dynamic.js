@@ -1,3 +1,5 @@
+'use strict';
+
 var middleware = require('./middleware.js');
 
 function process(key, req, res){

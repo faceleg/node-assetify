@@ -1,3 +1,5 @@
+'use strict';
+
 var path = require('path'),
     jsn = require('jsn'),
     parser = require('./parser.js');

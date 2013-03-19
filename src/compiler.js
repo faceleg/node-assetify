@@ -1,3 +1,5 @@
+'use strict';
+
 var extend = require('xtend'),
     fs = require('fs'),
     path = require('path'),
@@ -35,7 +37,7 @@ function configure(opts){
 }
 
 function anonymousSnippet(){
-    return '/snippet_' + ++snippets + '.js';
+    return '/snippet_' + (++snippets) + '.js';
 }
 
 function readFilesAsync(items, cb){

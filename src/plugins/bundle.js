@@ -1,3 +1,5 @@
+'use strict';
+
 var async = require('async'),
     path = require('path');
 
@@ -6,7 +8,7 @@ module.exports = {
         eventName: 'beforeBundle',
         plugin: function(items, config, ctx, callback){
             if (config.profiles === undefined){
-                config.profiles = ['all']
+                config.profiles = ['all'];
             }
             var bundles = [];
 

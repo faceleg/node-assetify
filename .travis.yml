@@ -4,6 +4,4 @@ node_js:
   - 0.8
 
 script:
-  - "npm install"
-  - "cd src"
-  - "make test"
+  - grunt travis --verbose

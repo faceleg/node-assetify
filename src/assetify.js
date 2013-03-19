@@ -1,3 +1,5 @@
+'use strict';
+
 var api = {
     compile: require('./compiler.js').compile,
     middleware: require('./middleware.js').initialize,
@@ -9,7 +11,7 @@ var api = {
             local: local,
             test: 'window.jQuery',
             profile: profile
-        }
+        };
     }
 };
 

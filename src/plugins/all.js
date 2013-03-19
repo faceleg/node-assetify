@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
     bundle: require('./bundle.js'),
     less: require('./less.js'),

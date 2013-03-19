@@ -1,3 +1,5 @@
+'use strict';
+
 var path = require('path'),
     less = require('less'),
     parser = require('./parser.js');

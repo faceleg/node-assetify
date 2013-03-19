@@ -1,3 +1,5 @@
+'use strict';
+
 var extend = require('xtend'),
     async = require('async'),
     registry = {};

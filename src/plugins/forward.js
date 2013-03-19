@@ -1,3 +1,5 @@
+'use strict';
+
 var async = require('async'),
     path = require('path'),
     disk = require('../disk.js');

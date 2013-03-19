@@ -1,3 +1,5 @@
+'use strict';
+
 var url = require('url');
 
 function profile(tags){
@@ -88,7 +90,7 @@ function styleTags(items, config){
                 return '';
             }
         }
-    })
+    });
 }
 
 var api = {

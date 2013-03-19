@@ -1,3 +1,5 @@
+'use strict';
+
 var path = require('path'),
     coffee = require('coffee-script'),
     parser = require('./parser.js');
