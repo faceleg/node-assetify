@@ -2,9 +2,6 @@
   "strict": true,
   "node": true,
   "globals": {
-    "console": true,
-    "module": true,
-
     "jasmine": false,
     "describe": false,
     "xdescribe": false,
