@@ -93,9 +93,7 @@ function styleTags(items, config){
     });
 }
 
-var api = {
+module.exports = {
     styleTags: styleTags,
     scriptTags: scriptTags
 };
-
-module.exports = api;
