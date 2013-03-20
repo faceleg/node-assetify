@@ -3,10 +3,16 @@
 var extend = require('xtend'),
     agnostic = [];
 
-function register(key, prop, cb){
+function register(path, cb){
+    if(typeof path !== 'string'){
+        throw new TypeError('path must be set. e.g: "js.emit"');
+    }
+    if(typeof cb !== 'function'){
+        throw new TypeError('you must provide a callback function');
+    }
+
     agnostic.push({
-        key: key,
-        prop: prop,
+        path: path,
         callback: cb
     });
 }
@@ -15,10 +21,17 @@ function localize(req, res){
     var localized = {};
 
     agnostic.forEach(function(item){
-        if (localized[item.key] === undefined){
-            localized[item.key] = {};
-        }
-        localized[item.key][item.prop] = item.callback(req, res);
+        var nodes = item.path.split('.'),
+            lastNode = nodes.splice(nodes.length - 1, 1),
+            step = localized;
+
+        nodes.forEach(function(node){
+            if (step[node] === undefined){
+                step[node] = {};
+            }
+            step = step[node];
+        });
+        step[lastNode] = item.callback(req, res);
     });
 
     return localized;
@@ -31,7 +44,13 @@ function initialize(){
     };
 }
 
+function clear(){
+    agnostic = [];
+}
+
 module.exports = {
+    _clear: clear,
+    get _length(){ return agnostic.length; },
     register: register,
     initialize: initialize
 };

@@ -1,6 +1,7 @@
 {
   "strict": true,
   "node": true,
+  "es5": true,
   "globals": {
     "jasmine": false,
     "describe": false,

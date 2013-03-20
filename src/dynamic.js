@@ -22,7 +22,7 @@ function process(key, req, res){
 }
 
 function register(key){
-    middleware.register(key, 'add', function(req, res){
+    middleware.register(key + '.add', function(req, res){
         var locals = res.locals;
 
         return function(src, placement){

@@ -122,7 +122,7 @@ function compileInternal(items, key, tag, done){
     }
 
     processLoop(items, key, function(results, ctx){
-        middleware.register(key, 'emit', function(req, res){
+        middleware.register(key + '.emit', function(req, res){
             ctx.http = { req: req, res: res };
 
             // NOTE: beforeRender plugins _must_ be synchronous
