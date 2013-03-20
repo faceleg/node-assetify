@@ -1,7 +1,6 @@
 'use strict';
 
-var extend = require('xtend'),
-    async = require('async'),
+var async = require('async'),
     registry = {};
 
 function ensurePlugins(key, eventName){

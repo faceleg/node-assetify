@@ -1,6 +1,7 @@
 'use strict';
 
-var middleware = require('../../src/middleware.js');
+var proxyquire = require('proxyquire').noCallThru(),
+    middleware = require('../../src/middleware.js', {});
 
 describe('middleware', function(){
     beforeEach(function(){

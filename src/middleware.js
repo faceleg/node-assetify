@@ -1,7 +1,6 @@
 'use strict';
 
-var extend = require('xtend'),
-    agnostic = [];
+var agnostic = [];
 
 function register(path, cb){
     if(typeof path !== 'string'){

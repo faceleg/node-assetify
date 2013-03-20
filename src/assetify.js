@@ -5,14 +5,7 @@ var api = {
     middleware: require('./middleware.js').initialize,
     use: require('./plugins/framework.js').register,
     plugins: require('./plugins/all.js'),
-    jQuery: function(version, local, profile, debug){
-        return {
-            ext: '//ajax.googleapis.com/ajax/libs/jquery/' + version + '/jquery' + (debug ? '' : '.min') + '.js',
-            local: local,
-            test: 'window.jQuery',
-            profile: profile
-        };
-    }
+    jQuery: require('./jquery.js')
 };
 
 require('./dynamic.js').expose();

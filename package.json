@@ -24,7 +24,8 @@
     "grunt": "~0.4.1",
     "grunt-cli": "~0.1.6",
     "grunt-contrib-jshint": "~0.1.1",
-    "grunt-jasmine-node": "0.0.6"
+    "grunt-jasmine-node": "0.0.6",
+    "proxyquire": "~0.4.0"
   },
   "repository": {
     "type": "git",
@@ -33,9 +34,11 @@
   "bugs": {
     "url": "https://github.com/bevacqua/node-assetify/issues"
   },
-  "licenses": [{
-    "type": "MIT"
-  }],
+  "licenses": [
+    {
+      "type": "MIT"
+    }
+  ],
   "main": "./src/assetify.js",
   "engines": {
     "node": ">= 0.8.x",
