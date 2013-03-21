@@ -29,17 +29,6 @@ describe('api interface should be exposed', function(){
         },
         stubs = {}, assetify;
 
-    for(var mapping in map){
-        stubs[map[mapping].module] = map[mapping].mock;
-    }
-
-    stubs['./dynamic.js'] = { expose: function(){} };
-    assetify = proxyquire('../../src/assetify.js', stubs);
-
-    for(var method in map){
-        testCase(method);
-    }
-
     function testCase(method){
         it('should expose interface method named ' + method, function(){
             var api = assetify[method],
@@ -49,5 +38,16 @@ describe('api interface should be exposed', function(){
             var result = mapped.value || mapped.mock;
             expect(api).toEqual(result);
         });
+    }
+
+    for(var mapping in map){
+        stubs[map[mapping].module] = map[mapping].mock;
+    }
+
+    stubs['./dynamic.js'] = { expose: function(){} };
+    assetify = proxyquire('../../src/assetify.js', stubs);
+
+    for(var method in map){
+        testCase(method);
     }
 });

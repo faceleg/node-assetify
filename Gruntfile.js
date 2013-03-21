@@ -3,16 +3,16 @@
 module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+        jshint: {
+            files: ['Gruntfile.js', 'src/**/*.js', 'test/spec/**/*.js'],
+            options: {
+                jshintrc: '.jshintrc'
+            }
+        },
         jasmine_node: {
             matchall: true,
             forceExit: true,
             projectRoot: './test/spec'
-        },
-        jshint: {
-            files: ['gruntfile.js', 'src/**/*.js', 'test/spec/**/*.js'],
-            options: {
-                jshintrc: '.jshintrc'
-            }
         }
     });
 

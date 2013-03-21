@@ -64,7 +64,7 @@ function readFilesAsync(items, cb){
             item.out = item.local || anonymousSnippet();
         }
 
-        if(item.local !== undefined){ // local might not exist.
+        if(item.local !== undefined && item.src === undefined){ // local might not exist.
             var file = path.join(config.source, item.local);
 
             fs.readFile(file, function(err, data){
@@ -75,7 +75,9 @@ function readFilesAsync(items, cb){
                 callback(err);
             });
         }else{
-            item.src = ''; // sanity
+            if(item.src === undefined){
+                item.src = ''; // sanity
+            }
             callback();
         }
     },cb);

@@ -4,38 +4,6 @@ var async = require('async'),
     path = require('path'),
     disk = require('../disk.js');
 
-function plugin(items, config, ctx, callback){
-    if (config.__forwarded === true){ // sanity
-        return callback();
-    }
-    config.__forwarded = true;
-
-    var walk = require('walk'),
-        walker  = walk.walk(config.source, { followLinks: false }),
-        files = [];
-
-    walker.on('file', function(root, stat, next) {
-        var current = path.join(root, stat.name),
-            extname = path.extname(current);
-
-        if(ctx.opts.extnames.indexOf(extname) > -1){
-            files.push(current);
-        }
-        next();
-    });
-
-    walker.on('end', function() {
-        async.forEach(files, function(file, done){
-            forwardFile(file, config, ctx, done);
-        },function(err){
-            if(err){
-                throw err;
-            }
-            callback();
-        });
-    });
-}
-
 /* if e.g: '/css/fonty/fonts.css' is an input location with a different out location,
  * then forward stuff like '/css/fonty/font.ttf' to that same output folder
  * this will prevent issues in relative paths when assets are bundled together.
@@ -68,6 +36,38 @@ function forwardFile(file, config, ctx, done){
         fixed = fixTargetForAssetifiedFolders(relative, target, config, ctx);
 
     disk.copySafe(file, fixed, done);
+}
+
+function plugin(items, config, ctx, callback){
+    if (config.__forwarded === true){ // sanity
+        return callback();
+    }
+    config.__forwarded = true;
+
+    var walk = require('walk'),
+        walker  = walk.walk(config.source, { followLinks: false }),
+        files = [];
+
+    walker.on('file', function(root, stat, next) {
+        var current = path.join(root, stat.name),
+            extname = path.extname(current);
+
+        if(ctx.opts.extnames.indexOf(extname) > -1){
+            files.push(current);
+        }
+        next();
+    });
+
+    walker.on('end', function() {
+        async.forEach(files, function(file, done){
+            forwardFile(file, config, ctx, done);
+        },function(err){
+            if(err){
+                throw err;
+            }
+            callback();
+        });
+    });
 }
 
 module.exports = function(opts, concatenate){
