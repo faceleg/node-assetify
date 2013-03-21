@@ -34,6 +34,16 @@
   "bugs": {
     "url": "https://github.com/bevacqua/node-assetify/issues"
   },
+  "keywords": [
+    "asset", "assets",
+    "asset-manager",
+    "asset-management",
+    "static",
+    "static-assets",
+    "minification", "minifier", "minify",
+    "bundling", "bundler", "concat", "concatenate",
+    "build", "compile", "browser"
+  ],
   "licenses": [
     {
       "type": "MIT"
