@@ -75,7 +75,7 @@ function readFilesAsync(items, cb){
                 callback(err);
             });
         }else{
-            if(item.src === undefined){
+            if (item.src === undefined){
                 item.src = ''; // sanity
             }
             callback();
