@@ -21,7 +21,7 @@ describe('jquery', function(){
         beforeEach(function(){
             local = '/js/lib/jquery.js';
             profile = 'foo';
-            result = jquery('1.9', local, profile, true);
+            result = jquery('1.9', true, local, profile);
         });
 
         it('should return an object with the local property', function(){
