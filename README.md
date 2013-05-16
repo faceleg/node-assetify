@@ -16,7 +16,8 @@ Server-side:
 
 ```javascript
 var bin = __dirname + '/static/bin',
-    assetify.compile({
+    instance = assetify(),
+    instance.compile({
         source: __dirname + '/static',
         bin: bin,
         js: [
@@ -28,7 +29,7 @@ var bin = __dirname + '/static/bin',
             throw err;
         }
         app.use(connect.static(bin));
-        app.use(assetify.middleware());
+        app.use(instance.middleware());
     });
 ```
 

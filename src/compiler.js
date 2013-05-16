@@ -126,7 +126,7 @@ function compiler(middleware, pluginFramework, dynamics){
                 pluginFramework.raise(key, 'beforeRender', results, config, ctx, function(){});
 
                 return function(profile, includeCommon){
-                    var dyn = dynamic.process(key, req, res),
+                    var dyn = dynamics.process(key, req, res),
                         all = dyn.before.concat(results).concat(dyn.after),
                         internal = tag(all, config);
 
