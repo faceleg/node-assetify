@@ -33,6 +33,8 @@ var bin = __dirname + '/static/bin',
     });
 ```
 
+Alternatively, assetify supports Grunt. [Check out the plugin here!](https://github.com/bevacqua/grunt-assetify "grunt-assetify plugin")
+
 Using the middleware allows **assetify** to do two things:
 
 - Firstly, it allows **assetify** to expose the _emitter_ functions to your views. Allowing you to emit the `<script>` and `<link>` tags _without repeating yourself_.
