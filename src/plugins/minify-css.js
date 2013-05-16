@@ -12,12 +12,7 @@ module.exports = {
                 var source = item.src.toString();
                 item.src = cleanCss.process(source);
                 done();
-            },function(err){
-                if(err){
-                    throw err;
-                }
-                callback();
-            });
+            }, callback);
         }
     }]
 };

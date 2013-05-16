@@ -16,12 +16,7 @@ module.exports = {
 
                 item.src = result.code;
                 done();
-            },function(err){
-                if(err){
-                    throw err;
-                }
-                callback();
-            });
+            }, callback);
         }
     }]
 };

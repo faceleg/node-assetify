@@ -69,10 +69,10 @@ function readFilesAsync(items, cb){
 
             fs.readFile(file, function(err, data){
                 if(err){
-                    throw err;
+                    return callback(err);
                 }
                 item.src = data;
-                callback(err);
+                callback();
             });
         }else{
             if (item.src === undefined){
@@ -91,12 +91,7 @@ function outputAsync(items, cb){
         }else{
             callback();
         }
-    },function(err){
-        if(err){
-            throw err;
-        }
-        cb(null);
-    });
+    }, cb);
 }
 
 function processLoop(items, key, cb){
@@ -109,11 +104,8 @@ function processLoop(items, key, cb){
         async.apply(pluginFramework.raise, key, 'afterBundle', items, config, ctx),
         async.apply(outputAsync, items),
         async.apply(pluginFramework.raise, key, 'afterOutput', items, config, ctx)
-    ],function (err){
-        if(err){
-            throw err;
-        }
-        cb(items, ctx);
+    ], function (err){
+        cb(err, items, ctx);
     });
 }
 
@@ -123,7 +115,11 @@ function compileInternal(items, key, tag, done){
         return;
     }
 
-    processLoop(items, key, function(results, ctx){
+    processLoop(items, key, function(err, results, ctx){
+        if(err){
+            return done(err);
+        }
+        
         middleware.register(key + '.emit', function(req, res){
             ctx.http = { req: req, res: res };
 
@@ -150,7 +146,13 @@ function compile(opts, cb){
         async.parallel([
             async.apply(compileInternal, config.js, 'js', html.scriptTags),
             async.apply(compileInternal, config.css, 'css', html.styleTags)
-        ], cb);
+        ], function(err){
+            if(err){
+                console.log(err);
+                throw err.stack || err;
+            }
+            cb();
+        });
     });
 
     return config.bin;

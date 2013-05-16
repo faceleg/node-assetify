@@ -34,13 +34,8 @@ function raise(key, eventName, items, config, ctx, done){
         ctx.opts = e.opts;
         tasks.push(async.apply(e.plugin, items, config, ctx));
     });
-
-    async.series(tasks, function(err){
-        if(err){
-            throw err;
-        }
-        return done(null);
-    });
+    
+    async.series(tasks, done);
 }
 
 function register(key, eventName, plugin, opts){

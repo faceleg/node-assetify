@@ -7,7 +7,7 @@ var path = require('path'),
 module.exports = parser.configure('js',['.jsn'], function(item, config, ctx, done){
     jsn.parse(item.src.toString(), item.context, function (err, js) {
         if(err){
-            throw err;
+            return done(err);
         }
         item.src = js;
         done();

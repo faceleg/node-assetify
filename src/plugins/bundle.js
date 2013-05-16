@@ -26,7 +26,7 @@ module.exports = {
                     if(item.profile === undefined || item.profile.indexOf(profile) !== -1 || profile === 'all'){
                         if(item.ext === undefined && item.inline !== true){
                             if(item.src === undefined){
-                                throw new Error('item has no source nor is an external resource');
+                                done(new Error('item has no source nor is an external resource'));
                             }
                             bundle.locals.push(item.local);
                             bundle.sources.push(item.src);
@@ -43,7 +43,7 @@ module.exports = {
                 return done();
             }, function(err){
                 if(err){
-                    throw err;
+                    return callback(err);
                 }
                 items.splice(0, items.length);
                 bundles.forEach(function(bundle){

@@ -10,9 +10,9 @@ module.exports = parser.configure('css',['.sass','.scss'], function(item, config
 
     sass.render(item.src.toString(), function (err, css) {
         if(err){
-            throw err;
+            return done(err);
         }
         item.src = css;
         done();
-    }, { include_paths: [includes] });
+    }, { include_paths: [includes, process.cwd()] });
 });

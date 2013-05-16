@@ -8,7 +8,8 @@ module.exports = {
         eventName: 'beforeRender',
         plugin: function(items, config, ctx, done){
             if(!ctx.http.req.assetFingerprint){
-                throw new Error('You forgot to add the static-asset middleware to your application, it is necessary for this plugin to work.');
+                var msg = 'You forgot to add the static-asset middleware to your application, it is necessary for this plugin to work.';
+                return done(new Error(msg));
             }
             (items || []).forEach(function(item){
                 if (item.out){ // sanity

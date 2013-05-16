@@ -23,20 +23,14 @@ function getParser(key, extensions, parse){
                     item.out = replaceExtension(item.out, ext, extOut);
 
                     parse(item, config, ctx, done);
-                    return true;
                 }
-                return false;
+                return extName === ext;
             });
 
             if(!found){
                 done();
             }
-        },function(err){
-            if(err){
-                throw err;
-            }
-            callback();
-        });
+        }, callback);
     }
 
     return {
