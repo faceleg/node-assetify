@@ -34,11 +34,15 @@ function remove(path, cb){
     });
 }
 
-var api = {
+// trim ../ from relative path, avoid assets outside bin folder
+function parentless(relative){
+    var rback = /(\.\.[\/\\])/g;
+    return relative.replace(rback, '');
+}
+
+module.exports = {
     copySafe: copy,
     write: write,
-    removeSafe: remove
+    removeSafe: remove,
+    parentless: parentless
 };
-
-
-module.exports = api;

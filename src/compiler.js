@@ -84,6 +84,7 @@ function compiler(middleware, pluginFramework, dynamics){
     function outputAsync(items, cb){
         async.forEach(items, function(item, callback){
             if(item.inline !== true){ // don't write files for inline scripts
+                item.out = disk.parentless(item.out);
                 var file = path.join(config.bin, item.out);
                 disk.write(file, item.src, callback);
             }else{
