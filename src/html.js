@@ -1,6 +1,7 @@
 'use strict';
 
-var url = require('url');
+var url = require('url'),
+    rbackslash = /\\/g;
 
 function profile(tags){
     return function(key, includeCommon){
@@ -19,21 +20,17 @@ function profile(tags){
 
 function renderTags(items, opts){
     var tags = [];
+
     items.forEach(function(item){
-        var external = item.ext !== undefined,
-            href = external ? item.ext : item.out;
-
-        if(item.inline === true){
-            href = undefined;
-        }
-
-        if (href !== undefined){
+        var href = item.inline ? null : (item.ext ? item.ext : item.out);
+        if (href){
             if(!/^https?:\/\//.test(href) && href.indexOf('/') !== 0){
                 href = '/' + href;
             }
-            if(!external){
+            if(!item.ext){
                 href = url.resolve(opts.config.host, href);
             }
+            href = href.replace(rbackslash, '/');
         }
 
         var tag = opts.render(href, item.src);
@@ -47,9 +44,10 @@ function renderTags(items, opts){
 
 function scriptTags(items, config){
     function then(item, tags){
-        if(item.ext !== undefined && item.out !== undefined){
-            if(item.test === undefined){
-                throw new Error('fallback test is missing');
+        if(item.ext && item.out){
+            if(item.test){
+                console.log('WARN: fallback test is missing for external asset');
+                return;
             }
             var open = ' || document.write(unescape("%3Cscript src=\'',
                 close = '\'%3E%3C/script%3E"))',
@@ -64,9 +62,9 @@ function scriptTags(items, config){
     return renderTags(items, {
         config: config,
         render: function(href, src){
-            if(href !== undefined){
+            if(href){
                 return '<script src="' + href + '"></script>';
-            }else if(src !== undefined){
+            }else if(src){
                 return '<script>' + src + '</script>';
             }else{
                 console.log('WARN: inline script with undefined source omitted.');
@@ -81,9 +79,9 @@ function styleTags(items, config){
     return renderTags(items, {
         config: config,
         render: function(href, src){
-            if(href !== undefined){
+            if(href){
                 return '<link rel="stylesheet" href="' + href + '"/>';
-            }else if(src !== undefined){
+            }else if(src){
                 return '<style>' + src + '</style>';
             }else{
                 console.log('WARN: inline style with undefined source omitted.');
