@@ -45,7 +45,7 @@ function renderTags(items, opts){
 function scriptTags(items, config){
     function then(item, tags){
         if(item.ext && item.out){
-            if(item.test){
+            if(!item.test){
                 console.log('WARN: fallback test is missing for external asset');
                 return;
             }
