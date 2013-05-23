@@ -1,4 +1,4 @@
-# [assetify](https://npmjs.org/package/assetify "assetify on npmjs") [![Build Status](https://travis-ci.org/bevacqua/node-assetify.png?branch=master)](https://travis-ci.org/bevacqua/node-assetify "Build Status")
+# [assetify](https://npmjs.org/package/assetify "assetify on npmjs") [![Build Status](https://travis-ci.org/bevacqua/node-assetify.png?branch=master)](https://travis-ci.org/bevacqua/node-assetify "Build Status") [![Dependency Status](https://gemnasium.com/bevacqua/node-assetify.png)](https://gemnasium.com/bevacqua/node-assetify)
 
 **assetify** is an open-source client-side asset manager for **Node.JS** web applications.
 
