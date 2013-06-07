@@ -42,10 +42,10 @@ function compiler(middleware, pluginFramework, dynamics){
         async.forEach(items, function(source, callback){
             var complex = typeof source === 'object',
                 item = complex ? source : {
-                    local: source
+                    file: source
                 };
 
-            item.locals = [item.local];
+            item.files = [item.file];
 
             if(typeof item.profile === 'string'){
                 item.profile = [item.profile];
@@ -59,11 +59,11 @@ function compiler(middleware, pluginFramework, dynamics){
             items[i] = item;
 
             if (item.inline !== true){
-                item.out = item.local || anonymousSnippet();
+                item.out = item.file || anonymousSnippet();
             }
 
-            if(item.local !== undefined && item.src === undefined){ // local might not exist.
-                var file = path.join(config.source, item.local);
+            if(item.file !== undefined && item.src === undefined){ // file might not exist.
+                var file = path.join(config.source, item.file);
 
                 fs.readFile(file, function(err, data){
                     if(err){

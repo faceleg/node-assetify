@@ -16,17 +16,17 @@ describe('jquery', function(){
     });
 
     describe('test cases', function(){
-        var result, local, profile;
+        var result, file, profile;
 
         beforeEach(function(){
-            local = '/js/lib/jquery.js';
+            file = '/js/lib/jquery.js';
             profile = 'foo';
-            result = jquery('1.9', true, local, profile);
+            result = jquery('1.9', true, file, profile);
         });
 
-        it('should return an object with the local property', function(){
-            expect(result.local).toBeDefined();
-            expect(result.local).toEqual(local);
+        it('should return an object with the file property', function(){
+            expect(result.file).toBeDefined();
+            expect(result.file).toEqual(file);
         });
 
         it('should return an object with the profile property', function(){

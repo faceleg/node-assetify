@@ -5,7 +5,7 @@ var path = require('path'),
     parser = require('./parser.js');
 
 module.exports = parser.configure('css', ['.less'], function(item, config, ctx, done){
-    var filename = path.join(config.source, item.local),
+    var filename = path.join(config.source, item.file),
         includes = path.dirname(filename),
         compiler = new(less.Parser)({
             paths: [includes, process.cwd()],

@@ -7,12 +7,12 @@ function instance(middleware){
             after: []
         };
 
-        (res.locals.assetify.__dynamicStore || []).forEach(function(local){
-            if(local.key === key){
-                if(local.placement === 'before'){
-                    dynamics.before.push({ src: local.src, inline: true });
+        (res.locals.assetify.__dynamicStore || []).forEach(function(item){
+            if(item.key === key){
+                if(item.placement === 'before'){
+                    dynamics.before.push({ src: item.src, inline: true });
                 }else{
-                    dynamics.after.push({ src: local.src, inline: true });
+                    dynamics.after.push({ src: item.src, inline: true });
                 }
             }
         });

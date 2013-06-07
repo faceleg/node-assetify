@@ -5,7 +5,7 @@ var path = require('path'),
     parser = require('./parser.js');
 
 module.exports = parser.configure('css',['.sass','.scss'], function(item, config, ctx, done){
-    var filename = path.join(config.source, item.local),
+    var filename = path.join(config.source, item.file),
         includes = path.dirname(filename);
 
     sass.render(item.src.toString(), function (err, css) {

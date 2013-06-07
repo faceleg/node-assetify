@@ -22,7 +22,7 @@ var bin = __dirname + '/static/bin',
         bin: bin,
         js: [
             '/js/file.js',
-            { profile: 'mystical', local: '/js/admin.js' }
+            { profile: 'mystical', file: '/js/admin.js' }
         ]
     }, function(err){
         if(err){
@@ -75,7 +75,7 @@ assetify.jQuery('1.8.3', '/js/jquery-1.8.3.min.js')
 ### Asset Configurations
 
 You could provide a string, telling assetify where the file is (relative to **source**), for example `/css/ie6-hacks.css`.
-Another option is to provide an object, here you can specify `local` (which is what plain strings convert to), and `profile`, which is the name (or names, in an array) of the profile(s) you want this file to be included in. `profile` defaults to `undefined`, which means that this asset is used by every profile.
+Another option is to provide an object, here you can specify `file` (which is what plain strings convert to), and `profile`, which is the name (or names, in an array) of the profile(s) you want this file to be included in. `profile` defaults to `undefined`, which means that this asset is used by every profile.
 
 You could also just specify the raw source code, instead of giving assetify a file to look at. **Look, ma!**
 
@@ -100,12 +100,12 @@ var base = __dirname + '/static',
             '/css/libs/markdown.css',
             '/css/libs/prettify.css',
             '/css/libs/pikaday.css',
-            { profile: 'author', local: '/css/layouts/author.css' },
+            { profile: 'author', file: '/css/layouts/author.css' },
             '/css/views/main/entries.css',
-            { profile: 'anon', local: '/css/views/user/register.css' },
-            { profile: 'anon', local: '/css/views/user/login.css' },
-            { profile: 'author', local: '/css/views/author/editor.css' },
-            { profile: 'author', local: '/css/views/author/review.css' }
+            { profile: 'anon', file: '/css/views/user/register.css' },
+            { profile: 'anon', file: '/css/views/user/login.css' },
+            { profile: 'author', file: '/css/views/author/editor.css' },
+            { profile: 'author', file: '/css/views/author/review.css' }
         ],
         js: [
             assetify.jQuery('1.8.3', '/js/jquery-1.8.3.min.js'),
@@ -127,12 +127,12 @@ var base = __dirname + '/static',
             '/js/nbrut/nbrut.init.js',
             '/js/views/thin.hooks.js',
             '/js/views/templates.js',
-            { profile: 'anon', local: '/js/views/templates.anon.js' },
-            { profile: 'author', local: '/js/views/templates.author.js'},
+            { profile: 'anon', file: '/js/views/templates.anon.js' },
+            { profile: 'author', file: '/js/views/templates.author.js'},
             '/js/views/main/entries.js',
             '/js/views/main/entry.js',
-            { profile: 'author', local: '/js/views/author/editor.js' },
-            { profile: 'author', local: '/js/views/author/review.js' }
+            { profile: 'author', file: '/js/views/author/editor.js' },
+            { profile: 'author', file: '/js/views/author/review.js' }
         ]
     };
 
@@ -147,7 +147,7 @@ You can hook into assetify through plugins. There are a few events that are rais
 - **beforeBundle**: Raised before files are bundled together into profiles. Useful for _actually bundling_ (which is a plugin in itself).
 - **afterBundle**: Raised after files are bundled together into profiles. Useful for _minification_.
 - **afterOutput**: Raised after files are copied to the final destinations. Useful for _post-processing_, like licensing comments.
-- **beforeRender**: Raised on every request, before the assets are included in the locals object. Useful for hashing and fingerprinting. `ctx` will contain `http` with both the `req` and `res` objects.
+- **beforeRender**: Raised on every request, before the assets are included in the files object. Useful for hashing and fingerprinting. `ctx` will contain `http` with both the `req` and `res` objects.
 
 To configure a plugin, you must add it **before** calling `assetify.compile`. These can be added in two ways. The simpler way is:
 

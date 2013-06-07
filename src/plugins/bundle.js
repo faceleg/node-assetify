@@ -18,7 +18,7 @@ module.exports = {
                         profile: [profile],
                         out: filename,
                         path: path.join(config.bin, filename),
-                        locals: [],
+                        files: [],
                         sources: []
                     };
 
@@ -28,7 +28,7 @@ module.exports = {
                             if(item.src === undefined){
                                 done(new Error('item has no source nor is an external resource'));
                             }
-                            bundle.locals.push(item.local);
+                            bundle.files.push(item.file);
                             bundle.sources.push(item.src);
                         }else{
                             if (bundles.indexOf(item) === -1){
