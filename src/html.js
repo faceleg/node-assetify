@@ -46,7 +46,9 @@ function scriptTags(items, config){
     function then(item, tags){
         if(item.ext && item.out){
             if(!item.test){
-                console.log('WARN: fallback test is missing for external asset');
+                if(!!item.src){
+                    console.log('WARN: fallback test is missing for external asset with local fallback');
+                }
                 return;
             }
             var open = ' || document.write(unescape("%3Cscript src=\'',
