@@ -24,7 +24,7 @@ function renderTags(items, opts){
     items.forEach(function(item){
         var href = item.inline ? null : (item.ext ? item.ext : item.out);
         if (href){
-            if(!/^https?:\/\//.test(href) && href.indexOf('/') !== 0){
+            if(!/^(https?:)?\/\//.test(href) && href.indexOf('/') !== 0){
                 href = '/' + href;
             }
             if(!item.ext){

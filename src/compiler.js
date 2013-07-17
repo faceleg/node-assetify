@@ -45,7 +45,7 @@ function compiler(middleware, pluginFramework, dynamics){
                     file: source
                 };
 
-            item.files = [item.file];
+            item.files = item.file ? [item.file] : [];
 
             if(typeof item.profile === 'string'){
                 item.profile = [item.profile];
@@ -58,7 +58,7 @@ function compiler(middleware, pluginFramework, dynamics){
             var i = items.indexOf(source);
             items[i] = item;
 
-            if (item.inline !== true){
+            if (item.inline !== true && (item.file || !item.ext)){
                 item.out = item.file || anonymousSnippet();
             }
 
@@ -83,7 +83,7 @@ function compiler(middleware, pluginFramework, dynamics){
 
     function outputAsync(items, cb){
         async.forEach(items, function(item, callback){
-            if(item.inline !== true){ // don't write files for inline scripts
+            if(item.inline !== true && (item.file || !item.ext)){ // don't write files for inline scripts
                 item.out = disk.parentless(item.out);
                 var file = path.join(config.bin, item.out);
                 disk.write(file, item.src, callback);
