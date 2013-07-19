@@ -38,7 +38,7 @@ module.exports = function(){
         });
     }
 
-    function deserialize(bin){
+    function deserialize(bin){        
         var file = path.join(bin, 'assetify.json'),
             json = fs.readFileSync(file, 'utf8'),
             data = JSON.parse(json);

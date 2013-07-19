@@ -62,6 +62,8 @@ function middleware(pluginFramework, dynamics){
             bin = path.join(data.assets.bin, 'assets'),
             roots = data.assets.roots || [];
 
+        process.stdout.write('Registering assets with middleware...');
+
         unwrap(data);
 
         if(data.compress){
@@ -88,6 +90,8 @@ function middleware(pluginFramework, dynamics){
             res.locals.assetify = localize(req, res);
             next();
         });
+
+        process.stdout.write('done\n');
     }
 
     function unwrap(data){
@@ -95,7 +99,9 @@ function middleware(pluginFramework, dynamics){
 
         data.compilation.forEach(function(hash){
             register(hash.key + '.emit', function(req, res){
-                ctx.http = { req: req, res: res };
+                var ctx = {
+                    http: { req: req, res: res }
+                };
 
                 // NOTE: beforeRender plugins _must_ be synchronous
                 // in order to make an impact on the request object
