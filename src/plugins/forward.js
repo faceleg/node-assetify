@@ -32,7 +32,7 @@ function fixTargetForAssetifiedFolders(relative, target, config, ctx){
 
 function forwardFile(file, config, ctx, done){
     var relative = path.relative(config.source, file),
-        target = path.join(config.bin, relative),
+        target = path.join(config.bin, 'assets', relative),
         fixed = fixTargetForAssetifiedFolders(relative, target, config, ctx);
 
     disk.copySafe(file, fixed, done);

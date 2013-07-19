@@ -43,7 +43,7 @@ function middleware(){
 
     function expiresHeader(opts){
         return function(req,res,next){
-            if (req.url === '/favicon.ico' || (opts.expires && opts.expires.test(req))) {
+            if (req.url === '/favicon.ico' || (opts.expires && opts.expires.test(req.url))) {
                 res.setHeader('Cache-Control', 'public, max-age=31535650');
                 res.setHeader('Expires', new Date(Date.now() + 31535650000).toUTCString());
             }

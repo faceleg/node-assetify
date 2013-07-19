@@ -85,7 +85,7 @@ function compiler(middleware, pluginFramework, dynamics){
         async.forEach(items, function(item, callback){
             if(item.inline !== true && (item.file || !item.ext)){ // don't write files for inline scripts
                 item.out = disk.parentless(item.out);
-                var file = path.join(config.bin, item.out);
+                var file = path.join(config.bin, 'assets', item.out);
                 disk.write(file, item.src, callback);
             }else{
                 callback();
@@ -150,6 +150,7 @@ function compiler(middleware, pluginFramework, dynamics){
                     console.log(err);
                     throw err.stack || err;
                 }
+
                 cb();
             });
         });
