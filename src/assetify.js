@@ -7,14 +7,18 @@ module.exports = {
             dynamics = require('./dynamic.js').instance(middleware),
             api = {
                 compile: require('./compiler.js').instance(middleware, pluginFramework, dynamics),
-                middleware: middleware.initialize,
                 use: pluginFramework.register,
                 plugins: require('./plugins/all.js'),
                 jQuery: require('./jquery.js')
-            };
+            },
+            fn = middleware.instance;
+
+        for(var key in api){
+            fn[key] = api[key];
+        }
 
         dynamics.expose();
 
-        return api;
+        return fn;
     }
 };

@@ -6,7 +6,7 @@
     "email": "nicolasbevacqua@gmail.com",
     "url": "http://www.ponyfoo.com"
   },
-  "version": "0.3.0",
+  "version": "0.8.1",
   "dependencies": {
     "async": "0.2.8",
     "clean-css": "1.0.3",
@@ -35,14 +35,22 @@
     "url": "https://github.com/bevacqua/node-assetify/issues"
   },
   "keywords": [
-    "asset", "assets",
+    "asset",
+    "assets",
     "asset-manager",
     "asset-management",
     "static",
     "static-assets",
-    "minification", "minifier", "minify",
-    "bundling", "bundler", "concat", "concatenate",
-    "build", "compile", "browser"
+    "minification",
+    "minifier",
+    "minify",
+    "bundling",
+    "bundler",
+    "concat",
+    "concatenate",
+    "build",
+    "compile",
+    "browser"
   ],
   "licenses": [
     {

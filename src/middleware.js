@@ -37,22 +37,51 @@ function middleware(){
         return localized;
     }
 
-    function initialize(){
+    function clear(){
+        agnostic = [];
+    }
+
+    function expiresHeader(opts){
         return function(req,res,next){
-            res.locals.assetify = localize(req, res);
-            next();
+            if (req.url === '/favicon.ico' || (opts.expires && opts.expires.test(req))) {
+                res.setHeader('Cache-Control', 'public, max-age=31535650');
+                res.setHeader('Expires', new Date(Date.now() + 31535650000).toUTCString());
+            }
+            return next();
         };
     }
 
-    function clear(){
-        agnostic = [];
+    function instance(server, connect, opts){
+        if(opts.compress){
+            server.use(connect.compress());
+        }
+
+        server.use(expiresHeader(opts));
+
+        if(opts.assets.favicon){
+            server.use(connect.favicon(opts.assets.favicon));    
+        }
+        
+        var roots = opts.assets.roots || [];
+        roots.unshift(opts.assets.bin);
+        roots.forEach(function(root){
+            if(opts.fingerprint){
+                server.use(require('static-asset')(root));
+            }
+            server.use(connect.static(root));
+        });
+
+        server.use(function(req,res,next){
+            res.locals.assetify = localize(req, res);
+            next();
+        });
     }
 
     return {
         _clear: clear,
         get _length(){ return agnostic.length; },
         register: register,
-        initialize: initialize
+        instance: instance
     };
 }
 
