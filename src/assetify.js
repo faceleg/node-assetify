@@ -2,23 +2,23 @@
 
 module.exports = {
     instance: function(){
-        var middleware = require('./middleware.js').instance(),
-            pluginFramework = require('./plugins/framework.js').instance(),
-            dynamics = require('./dynamic.js').instance(middleware),
+        var pluginFramework = require('./plugins/framework.js').instance(),
+            dynamics = require('./dynamic.js').instance(),
+            middleware = require('./middleware.js').instance(pluginFramework, dynamics),
             api = {
                 compile: require('./compiler.js').instance(middleware, pluginFramework, dynamics),
                 use: pluginFramework.register,
                 plugins: require('./plugins/all.js'),
                 jQuery: require('./jquery.js')
             },
-            fn = middleware.instance;
+            configure = middleware.configure;
 
         for(var key in api){
-            fn[key] = api[key];
+            configure[key] = api[key];
         }
 
-        dynamics.expose();
+        dynamics.expose(middleware);
 
-        return fn;
+        return configure;
     }
 };

@@ -1,16 +1,14 @@
 'use strict';
 
-function compiler(middleware, pluginFramework, dynamics){
+function compiler(middleware, pluginFramework){
     var extend = require('xtend'),
         fs = require('fs'),
         path = require('path'),
         async = require('async'),
         disk = require('./disk.js'),
-        html = require('./html.js'),
         defaults = {
             js: [],
             css: [],
-            misc: [],
             host: ''
         },
         snippets = 0,
@@ -65,7 +63,7 @@ function compiler(middleware, pluginFramework, dynamics){
             if(item.file !== undefined && item.src === undefined){ // file might not exist.
                 var file = path.join(config.source, item.file);
 
-                fs.readFile(file, function(err, data){
+                fs.readFile(file, 'utf8', function(err, data){
                     if(err){
                         return callback(err);
                     }
@@ -108,7 +106,7 @@ function compiler(middleware, pluginFramework, dynamics){
         });
     }
 
-    function compileInternal(items, key, tag, done){
+    function compileInternal(items, key, done){
         if(items === undefined){
             process.nextTick(done);
             return;
@@ -118,44 +116,33 @@ function compiler(middleware, pluginFramework, dynamics){
             if(err){
                 return done(err);
             }
-            
-            middleware.register(key + '.emit', function(req, res){
-                ctx.http = { req: req, res: res };
 
-                // NOTE: beforeRender plugins _must_ be synchronous
-                // in order to make an impact on the request object
-                pluginFramework.raise(key, 'beforeRender', results, config, ctx, function(){});
+            middleware.meta.pushAsset(key, items);            
 
-                return function(profile, includeCommon){
-                    var dyn = dynamics.process(key, req, res),
-                        all = dyn.before.concat(results).concat(dyn.after),
-                        internal = tag(all, config);
-
-                    return internal(profile, includeCommon);
-                };
-            });
             done();
         });
     }
 
     return function(opts, cb){
-        configure(opts);
+        configure(opts.assets);
 
         disk.removeSafe(config.bin, function(){
             async.parallel([
-                async.apply(compileInternal, config.js, 'js', html.scriptTags),
-                async.apply(compileInternal, config.css, 'css', html.styleTags)
+                async.apply(compileInternal, config.js, 'js'),
+                async.apply(compileInternal, config.css, 'css')
             ], function(err){
                 if(err){
                     console.log(err);
                     throw err.stack || err;
                 }
 
-                cb();
+                middleware.meta.set('assets', opts.assets);
+                middleware.meta.set('expires', opts.expires);
+                middleware.meta.set('compress', opts.compress);
+                middleware.meta.set('fingerprint', opts.fingerprint);
+                middleware.meta.serialize(config.bin, cb);
             });
         });
-
-        return config.bin;
     };
 }
 

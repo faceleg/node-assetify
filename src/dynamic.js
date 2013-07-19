@@ -1,11 +1,13 @@
 'use strict';
 
-function instance(middleware){
+function instance(){
+    var middleware;
+    
     function process(key, req, res){
         var dynamics = {
-            before: [],
-            after: []
-        };
+                before: [],
+                after: []
+            };
 
         (res.locals.assetify.__dynamicStore || []).forEach(function(item){
             if(item.key === key){
@@ -37,14 +39,16 @@ function instance(middleware){
         });
     }
 
-    function expose(){
+    function expose(middlewareInstance){
+        middleware = middlewareInstance;
+        
         register('js');
         register('css');
     }
 
     return {
         process: process,
-        expose: expose
+        expose: expose,
     };
 }
 

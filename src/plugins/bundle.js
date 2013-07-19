@@ -17,7 +17,7 @@ module.exports = {
                     bundle = {
                         profile: [profile],
                         out: filename,
-                        path: path.join(config.bin, filename),
+                        path: path.join(config.bin, 'assets', filename),
                         files: [],
                         sources: []
                     };

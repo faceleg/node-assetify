@@ -9,7 +9,7 @@ module.exports = {
         eventName: 'afterBundle',
         plugin: function(items, config, ctx, callback){
             async.forEach(items, function(item, done){
-                var source = item.src.toString();
+                var source = item.src;
                 item.src = cleanCss.process(source);
                 done();
             }, callback);

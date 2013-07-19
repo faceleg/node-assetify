@@ -21,7 +21,7 @@ function fixTargetForAssetifiedFolders(relative, target, config, ctx){
                 var dirname = path.dirname(asset.out),
                     basename = path.basename(target);
 
-                target = path.join(config.bin, dirname, basename);
+                target = path.join(config.bin, 'assets', dirname, basename);
             }
             return match;
         });

@@ -1,7 +1,11 @@
 'use strict';
 
-function middleware(){
-    var agnostic = [];
+var path = require('path');
+
+function middleware(pluginFramework, dynamics){
+    var meta = require('./middleware-meta.js')(),
+        agnostic = [],
+        html = require('./html.js');
 
     function register(path, cb){
         if(typeof path !== 'string'){
@@ -41,31 +45,40 @@ function middleware(){
         agnostic = [];
     }
 
-    function expiresHeader(opts){
+    function expiresHeader(data){
         return function(req,res,next){
-            if (req.url === '/favicon.ico' || (opts.expires && opts.expires.test(req.url))) {
+            var favicon = data.assets.favicon && req.url === '/favicon.ico';
+            if (favicon || data.expires.test(req.url)){
                 res.setHeader('Cache-Control', 'public, max-age=31535650');
                 res.setHeader('Expires', new Date(Date.now() + 31535650000).toUTCString());
             }
-            return next();
+
+            next();
         };
     }
 
-    function instance(server, connect, opts){
-        if(opts.compress){
+    function configure(server, connect, bin){
+        var data = meta.deserialize(bin),
+            bin = path.join(data.assets.bin, 'assets'),
+            roots = data.assets.roots || [];
+
+        unwrap(data);
+
+        if(data.compress){
             server.use(connect.compress());
         }
 
-        server.use(expiresHeader(opts));
+        if(data.expires){
+            server.use(expiresHeader(data));
+        }        
 
-        if(opts.assets.favicon){
-            server.use(connect.favicon(opts.assets.favicon));    
+        if(data.assets.favicon){
+            server.use(connect.favicon(data.assets.favicon));    
         }
         
-        var roots = opts.assets.roots || [];
-        roots.unshift(opts.assets.bin);
+        roots.unshift(bin);
         roots.forEach(function(root){
-            if(opts.fingerprint){
+            if(data.fingerprint){
                 server.use(require('static-asset')(root));
             }
             server.use(connect.static(root));
@@ -77,11 +90,34 @@ function middleware(){
         });
     }
 
+    function unwrap(data){
+        // TODO re-register plugins. ALL? just fingerprint? just beforeRender plugins? how?..
+
+        data.compilation.forEach(function(hash){
+            register(hash.key + '.emit', function(req, res){
+                ctx.http = { req: req, res: res };
+
+                // NOTE: beforeRender plugins _must_ be synchronous
+                // in order to make an impact on the request object
+                pluginFramework.raise(hash.key, 'beforeRender', hash.items, data, ctx, function(){});
+
+                return function(profile, includeCommon){
+                    var dyn = dynamics.process(hash.key, req, res),
+                        all = dyn.before.concat(hash.items).concat(dyn.after),
+                        internal = html[hash.key](all, data.assets.host);
+
+                    return internal(profile, includeCommon);
+                };
+            });
+        });
+    }
+
     return {
         _clear: clear,
         get _length(){ return agnostic.length; },
         register: register,
-        instance: instance
+        configure: configure,
+        meta: meta
     };
 }
 

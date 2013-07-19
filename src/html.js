@@ -28,7 +28,7 @@ function renderTags(items, opts){
                 href = '/' + href;
             }
             if(!item.ext){
-                href = url.resolve(opts.config.host, href);
+                href = url.resolve(opts.host, href);
             }
             href = href.replace(rbackslash, '/');
         }
@@ -42,7 +42,7 @@ function renderTags(items, opts){
     return profile(tags);
 }
 
-function scriptTags(items, config){
+function scriptTags(items, host){
     function then(item, tags){
         if(item.ext && item.out){
             if(!item.test){
@@ -53,7 +53,7 @@ function scriptTags(items, config){
             }
             var open = ' || document.write(unescape("%3Cscript src=\'',
                 close = '\'%3E%3C/script%3E"))',
-                it = url.resolve(config.host, item.out),
+                it = url.resolve(host, item.out),
                 code = item.test + open + it + close,
                 fallback = '<script>' + code +  '</script>';
 
@@ -62,7 +62,7 @@ function scriptTags(items, config){
     }
 
     return renderTags(items, {
-        config: config,
+        host: host,
         render: function(href, src){
             if(href){
                 return '<script src="' + href + '"></script>';
@@ -77,9 +77,9 @@ function scriptTags(items, config){
     });
 }
 
-function styleTags(items, config){
+function styleTags(items, host){
     return renderTags(items, {
-        config: config,
+        host: host,
         render: function(href, src){
             if(href){
                 return '<link rel="stylesheet" href="' + href + '"/>';
@@ -94,6 +94,6 @@ function styleTags(items, config){
 }
 
 module.exports = {
-    styleTags: styleTags,
-    scriptTags: scriptTags
+    css: styleTags,
+    js: scriptTags
 };

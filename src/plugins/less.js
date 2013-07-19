@@ -12,7 +12,7 @@ module.exports = parser.configure('css', ['.less'], function(item, config, ctx, 
             filename: path.basename(filename)
         });
 
-    compiler.parse(item.src.toString(), function (err, tree) {
+    compiler.parse(item.src, function (err, tree) {
         if(err){
             return done(err);
         }

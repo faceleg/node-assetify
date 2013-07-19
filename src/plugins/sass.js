@@ -8,7 +8,7 @@ module.exports = parser.configure('css',['.sass','.scss'], function(item, config
     var filename = path.join(config.source, item.file),
         includes = path.dirname(filename);
 
-    sass.render(item.src.toString(), function (err, css) {
+    sass.render(item.src, function (err, css) {
         if(err){
             return done(err);
         }
