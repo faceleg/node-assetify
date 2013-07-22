@@ -105,7 +105,7 @@ function middleware(pluginFramework, dynamics){
                 if(err){
                     return next(err);
                 }
-                console.log(localized);
+                
                 res.locals.assetify = localized;
                 next();
             });
