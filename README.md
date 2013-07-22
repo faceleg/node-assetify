@@ -67,7 +67,7 @@ Strings. Strings are syntactic sugar for an object like this: `{ file: '/the/str
     "inline": false,
     "src": "alert('foo');",
     "ext": "//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js",
-    "test": "window.jQuery"
+    "test": "window.jQuery",
     "profile": "owner"
 }
 ```
@@ -238,7 +238,7 @@ assetify(app, express, bin);
 
 We're basically passing assetify three things: the `app`, so that we can tack a middleware onto it; `express`, so we know how to use a few more configuration options, and `bin`, which is the same `bin` as the one we used in the compilation step.
 
-Your middleware won't do much. It will, however, set up a local variable in your `res` objects, called `assetify`. This object will have a **very small API`**.
+Your middleware won't do much. It will, however, set up a local variable in your `res` objects, called `assetify`. This object will have a **very small API**.
 
 ### #assetify.css.emit(profile)
 
