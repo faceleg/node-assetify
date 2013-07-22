@@ -131,12 +131,6 @@ function compiler(middleware, pluginFramework){
     return function(opts, complete){
         configure(opts.assets);
 
-        if(!config.explicit){
-            disk.removeSafe(config.bin, compile);
-        }else{
-            compile();
-        }
-        
         function compile(){
             async.parallel([
                 async.apply(compileInternal, config.js, 'js'),
@@ -155,6 +149,12 @@ function compiler(middleware, pluginFramework){
                 middleware.meta.set('binAssets', config.binAssets);
                 middleware.meta.serialize(config.bin, complete);
             });
+        }
+
+        if(!config.explicit){
+            disk.removeSafe(config.bin, compile);
+        }else{
+            compile();
         }
     };
 }
