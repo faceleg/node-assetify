@@ -23,10 +23,10 @@ function instance(){
     }
 
     function register(key){
-        middleware.register(key + '.add', function(req, res){
-            var locals = res.locals;
-
-            return function(src, placement){
+        middleware.register(key + '.add', function(req, res, done){
+            done(null, function(src, placement){
+                var locals = res.locals;
+                
                 if (locals.assetify.__dynamicStore === undefined){
                     locals.assetify.__dynamicStore = [];
                 }
@@ -35,7 +35,7 @@ function instance(){
                     src: src,
                     placement: placement
                 });
-            };
+            });
         });
     }
 

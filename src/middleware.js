@@ -1,6 +1,7 @@
 'use strict';
 
-var path = require('path');
+var async = require('async'),
+    path = require('path');
 
 function middleware(pluginFramework, dynamics){
     var meta = require('./middleware-meta.js')(),
@@ -21,24 +22,31 @@ function middleware(pluginFramework, dynamics){
         });
     }
 
-    function localize(req, res){
+    function localize(req, res, done){
         var localized = {};
 
-        agnostic.forEach(function(item){
+        async.forEach(agnostic, function(item, next){
             var nodes = item.path.split('.'),
                 lastNode = nodes.splice(nodes.length - 1, 1),
                 step = localized;
 
             nodes.forEach(function(node){
-                if (step[node] === undefined){
+                if(!step[node]){
                     step[node] = {};
                 }
                 step = step[node];
             });
-            step[lastNode] = item.callback(req, res);
+            
+            item.callback(req, res, function(err, result){
+                if(err){
+                    return next(err);
+                }
+                step[lastNode] = result;
+                next();
+            });
+        }, function(err){
+            done(err, localized);
         });
-
-        return localized;
     }
 
     function clear(){
@@ -78,6 +86,11 @@ function middleware(pluginFramework, dynamics){
             server.use(connect.favicon(data.assets.favicon));    
         }
         
+        if(data.fingerprint){
+            var fingerprint = require('./plugins/fingerprint.js');
+            pluginFramework.register(fingerprint);
+        }
+
         roots.unshift(assets);
         roots.forEach(function(root){
             if(data.fingerprint){
@@ -87,33 +100,34 @@ function middleware(pluginFramework, dynamics){
         });
 
         server.use(function(req,res,next){
-            res.locals.assetify = localize(req, res);
-            next();
+            localize(req, res, function(err, localized){
+                if(err){
+                    return next(err);
+                }
+                res.locals.assetify = localized;
+                next();
+            });
         });
 
         process.stdout.write('done\n');
     }
 
     function unwrap(data){
-        // TODO re-register plugins. ALL? just fingerprint? just beforeRender plugins? how?..
-
         data.compilation.forEach(function(hash){
-            register(hash.key + '.emit', function(req, res){
+            register(hash.key + '.emit', function(req, res, done){
                 var ctx = {
                     http: { req: req, res: res }
                 };
 
-                // NOTE: beforeRender plugins _must_ be synchronous
-                // in order to make an impact on the request object
-                pluginFramework.raise(hash.key, 'beforeRender', hash.items, data, ctx, function(){});
+                pluginFramework.raise(hash.key, 'beforeRender', hash.items, data, ctx, function(err){
+                    done(err, function(profile, includeCommon){
+                        var dyn = dynamics.process(hash.key, req, res),
+                            all = dyn.before.concat(hash.items).concat(dyn.after),
+                            internal = html[hash.key](all, data.assets.host);
 
-                return function(profile, includeCommon){
-                    var dyn = dynamics.process(hash.key, req, res),
-                        all = dyn.before.concat(hash.items).concat(dyn.after),
-                        internal = html[hash.key](all, data.assets.host);
-
-                    return internal(profile, includeCommon);
-                };
+                        return internal(profile, includeCommon);
+                    });
+                });
             });
         });
     }
