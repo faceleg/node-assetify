@@ -63,5 +63,6 @@ module.exports = {
     copySafe: copy,
     write: write,
     removeSafe: remove,
-    parentless: parentless
+    parentless: parentless,
+    optionExplicit: optionExplicit
 };
