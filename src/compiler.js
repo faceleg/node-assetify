@@ -145,6 +145,7 @@ function compiler(middleware, pluginFramework){
                 middleware.meta.set('expires', opts.expires);
                 middleware.meta.set('explicit', opts.explicit);
                 middleware.meta.set('compress', opts.compress);
+                middleware.meta.set('serve', opts.serve);
                 middleware.meta.set('fingerprint', opts.fingerprint);
                 middleware.meta.set('binAssets', config.binAssets);
                 middleware.meta.serialize(config.bin, complete);

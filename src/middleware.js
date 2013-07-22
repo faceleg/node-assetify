@@ -85,24 +85,27 @@ function middleware(pluginFramework, dynamics){
             server.use(connect.favicon(data.assets.favicon));    
         }
         
-        if(data.fingerprint){
-            var fingerprint = require('./plugins/fingerprint.js');
-            pluginFramework.register(fingerprint);
-        }
-
-        roots.unshift(data.binAssets);
-        roots.forEach(function(root){
+        if(data.serve !== false){
             if(data.fingerprint){
-                server.use(require('static-asset')(root));
+                var fingerprint = require('./plugins/fingerprint.js');
+                pluginFramework.register(fingerprint);
             }
-            server.use(connect.static(root));
-        });
+
+            roots.unshift(data.binAssets);
+            roots.forEach(function(root){
+                if(data.fingerprint){
+                    server.use(require('static-asset')(root));
+                }
+                server.use(connect.static(root));
+            });
+        }
 
         server.use(function(req,res,next){
             localize(req, res, function(err, localized){
                 if(err){
                     return next(err);
                 }
+                console.log(localized);
                 res.locals.assetify = localized;
                 next();
             });

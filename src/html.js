@@ -27,7 +27,7 @@ function renderTags(items, opts){
             if(!/^(https?:)?\/\//.test(href) && href.indexOf('/') !== 0){
                 href = '/' + href;
             }
-            if(!item.ext){
+            if(opts.host && !item.ext){
                 href = url.resolve(opts.host, href);
             }
             href = href.replace(rbackslash, '/');
@@ -53,7 +53,7 @@ function scriptTags(items, host){
             }
             var open = ' || document.write(unescape("%3Cscript src=\'',
                 close = '\'%3E%3C/script%3E"))',
-                it = url.resolve(host, item.out),
+                it = host ? url.resolve(host, item.out) : item.out,
                 code = item.test + open + it + close,
                 fallback = '<script>' + code +  '</script>';
 
