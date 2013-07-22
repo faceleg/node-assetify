@@ -82,7 +82,7 @@ function middleware(pluginFramework, dynamics){
         }        
 
         if(data.assets.favicon){
-            server.use(connect.favicon(data.assets.favicon));    
+            server.use(connect.favicon(data.assets.favicon));
         }
         
         if(data.serve !== false){
