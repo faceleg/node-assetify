@@ -36,7 +36,7 @@ function compiler(middleware, pluginFramework){
         return '/snippet_' + (++snippets) + '.js';
     }
 
-    function readFilesAsync(items, cb){
+    function readFilesAsync(items, done){
         async.forEach(items, function(source, callback){
             var complex = typeof source === 'object',
                 item = complex ? source : {
@@ -76,7 +76,7 @@ function compiler(middleware, pluginFramework){
                 }
                 callback();
             }
-        },cb);
+        }, done);
     }
 
     function outputAsync(items, cb){

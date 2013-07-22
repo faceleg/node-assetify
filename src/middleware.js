@@ -116,6 +116,7 @@ function middleware(pluginFramework, dynamics){
         data.compilation.forEach(function(hash){
             register(hash.key + '.emit', function(req, res, done){
                 var ctx = {
+                    key: hash.key,
                     http: { req: req, res: res }
                 };
 
