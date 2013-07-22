@@ -27,8 +27,8 @@ function compiler(middleware, pluginFramework){
         if(config.bin === undefined){
             throw new Error("opts.bin must be defined as the folder where processed assets will be stored");
         }
-        if(config.source === config.bin){
-            throw new Error("opts.source can't be the same as opts.bin");
+        if(config.source === config.bin && !config.explicit){
+            throw new Error("opts.source can't be the same as opts.bin unless opts.explicit is enabled");
         }
     }
 
@@ -79,19 +79,22 @@ function compiler(middleware, pluginFramework){
         }, done);
     }
 
-    function outputAsync(items, cb){
-        async.forEach(items, function(item, callback){
+    function outputAsync(items, complete){
+        async.forEach(items, function(item, done){
+            var file;
+
             if(item.inline !== true && (item.file || !item.ext)){ // don't write files for inline scripts
                 item.out = disk.parentless(item.out);
-                var file = path.join(config.bin, 'assets', item.out);
-                disk.write(file, item.src, callback);
+                item.out = disk.optionExplicit(item.out, config.explicit);
+                file = path.join(config.bin, 'assets', item.out);
+                disk.write(file, item.src, done);
             }else{
-                callback();
+                done();
             }
-        }, cb);
+        }, complete);
     }
 
-    function processLoop(items, key, cb){
+    function processLoop(items, key, complete){
         var ctx = { key: key };
 
         async.series([
@@ -102,31 +105,37 @@ function compiler(middleware, pluginFramework){
             async.apply(outputAsync, items),
             async.apply(pluginFramework.raise, key, 'afterOutput', items, config, ctx)
         ], function (err){
-            cb(err, items, ctx);
+            complete(err, items, ctx);
         });
     }
 
-    function compileInternal(items, key, done){
+    function compileInternal(items, key, complete){
         if(items === undefined){
-            process.nextTick(done);
+            process.nextTick(complete);
             return;
         }
 
         processLoop(items, key, function(err, results, ctx){
             if(err){
-                return done(err);
+                return complete(err);
             }
 
             middleware.meta.pushAsset(key, items);            
 
-            done();
+            complete();
         });
     }
 
-    return function(opts, cb){
+    return function(opts, complete){
         configure(opts.assets);
 
-        disk.removeSafe(config.bin, function(){
+        if(!config.explicit){
+            disk.removeSafe(config.bin, compile);
+        }else{
+            compile();
+        }
+        
+        function compile(){
             async.parallel([
                 async.apply(compileInternal, config.js, 'js'),
                 async.apply(compileInternal, config.css, 'css')
@@ -138,11 +147,12 @@ function compiler(middleware, pluginFramework){
 
                 middleware.meta.set('assets', opts.assets);
                 middleware.meta.set('expires', opts.expires);
+                middleware.meta.set('explicit', opts.explicit);
                 middleware.meta.set('compress', opts.compress);
                 middleware.meta.set('fingerprint', opts.fingerprint);
-                middleware.meta.serialize(config.bin, cb);
+                middleware.meta.serialize(config.bin, complete);
             });
-        });
+        }
     };
 }
 

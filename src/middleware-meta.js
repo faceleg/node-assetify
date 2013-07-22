@@ -27,10 +27,10 @@ module.exports = function(){
         delete data.assets.js;
         delete data.assets.css;
 
-        // non-inline scripts don't need the sources anymore
+        // non-inline scripts don't need their sources anymore
         data.compilation.forEach(function(type){
             type.items.forEach(function(item){
-                if(!item.inline){
+                if(!item.inline && !item.ext){
                     delete item.src;
                     delete item.sources;
                 }

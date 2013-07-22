@@ -34,10 +34,29 @@ function remove(path, cb){
     });
 }
 
-// trim ../ from relative path, avoid assets outside bin folder
+var rback = /(\.\.[\/\\])/g;
+var rexplicit = /^[a-z0-9_-]{1,8}$/i;
+
 function parentless(relative){
-    var rback = /(\.\.[\/\\])/g;
-    return relative.replace(rback, '');
+    // trim ../ from relative path, avoid assets outside bin folder   
+    var parentless = relative.replace(rback, '');
+}
+
+function optionExplicit(file, explicit){
+    if(!explicit){
+        return file;
+    }
+    if (explicit === true){
+        explicit = 'assetify';
+    }
+    if(!rexplicit.test(explicit)){
+        throw new Error('the explicit extension can only contain up to eight letters, numbers, and hyphens!');
+    }
+    var index = file.lastIndexOf('.'),
+        filename = file.substr(0, index),
+        extension = file.substr(index);
+
+    return filename + '.' + explicit + extension;
 }
 
 module.exports = {

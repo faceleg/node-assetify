@@ -270,6 +270,7 @@ Why are we passing `express` to create this middleware? Well, there are actually
     compress: true,
     fingerprint: true,
     expires: /^\/img\//i,
+    explicit: false,
     assets: {
         favicon: '/icon.ico',
         host: 'http://localhost:3000'
@@ -290,6 +291,12 @@ If this is enabled, then we're going to use [static-asset](https://github.com/bm
 ##### # opts.expires
 
 If this is set, then the regular expression provided will be used to give an `Expires` header to any matching request. The `favicon` will also receive this treatment.
+
+##### # opts.explicit
+
+When this option is `true`, assets will be prefixed with a custom extension, for example, `file.assetify.js` and `file.assetify.min.js`, rather than `file.js` and `file.min.js`. This enables us to place the output files in the same directory as where the sources are.
+
+This setting can also be set to a string to use as the custom extension. If treated as a boolean value, then `'assetify'` will be used.
 
 ##### # opts.assets.favicon
 
