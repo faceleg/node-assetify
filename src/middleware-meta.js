@@ -30,7 +30,7 @@ module.exports = function(){
         // non-inline scripts don't need their sources anymore
         data.compilation.forEach(function(type){
             type.items.forEach(function(item){
-                if(!item.inline && !item.ext){
+                if(!item.inline){
                     delete item.src;
                     delete item.sources;
                 }
