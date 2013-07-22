@@ -67,7 +67,6 @@ function middleware(pluginFramework, dynamics){
 
     function configure(server, connect, bin){
         var data = meta.deserialize(bin),
-            assets = path.join(bin, 'assets'),
             roots = data.assets.roots || [];
 
         process.stdout.write('Registering assets with middleware...');
@@ -91,7 +90,7 @@ function middleware(pluginFramework, dynamics){
             pluginFramework.register(fingerprint);
         }
 
-        roots.unshift(assets);
+        roots.unshift(data.binAssets);
         roots.forEach(function(root){
             if(data.fingerprint){
                 server.use(require('static-asset')(root));

@@ -21,7 +21,7 @@ function fixTargetForAssetifiedFolders(relative, target, config, ctx){
                 var dirname = path.dirname(asset.out),
                     basename = path.basename(target);
 
-                target = path.join(config.bin, 'assets', dirname, basename);
+                target = path.join(config.binAssets, dirname, basename);
             }
             return match;
         });
@@ -32,7 +32,7 @@ function fixTargetForAssetifiedFolders(relative, target, config, ctx){
 
 function forwardFile(file, config, ctx, done){
     var relative = path.relative(config.source, file),
-        target = path.join(config.bin, 'assets', relative),
+        target = path.join(config.binAssets, relative),
         fixed = fixTargetForAssetifiedFolders(relative, target, config, ctx);
 
     disk.copySafe(file, fixed, done);

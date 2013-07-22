@@ -30,6 +30,8 @@ function compiler(middleware, pluginFramework){
         if(config.source === config.bin && !config.explicit){
             throw new Error("opts.source can't be the same as opts.bin unless opts.explicit is enabled");
         }
+
+        config.binAssets = config.explicit ? config.bin : path.join(config.bin, 'assets');
     }
 
     function anonymousSnippet(key){
@@ -86,7 +88,7 @@ function compiler(middleware, pluginFramework){
             if(item.inline !== true && (item.file || !item.ext)){ // don't write files for inline scripts
                 item.out = disk.parentless(item.out);
                 item.out = disk.optionExplicit(item.out, config.explicit);
-                file = path.join(config.bin, 'assets', item.out);
+                file = path.join(config.binAssets, item.out);
                 disk.write(file, item.src, done);
             }else{
                 done();
@@ -150,6 +152,7 @@ function compiler(middleware, pluginFramework){
                 middleware.meta.set('explicit', opts.explicit);
                 middleware.meta.set('compress', opts.compress);
                 middleware.meta.set('fingerprint', opts.fingerprint);
+                middleware.meta.set('binAssets', config.binAssets);
                 middleware.meta.serialize(config.bin, complete);
             });
         }
