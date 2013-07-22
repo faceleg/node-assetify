@@ -24,7 +24,7 @@ $ npm install assetify --save
 
 This is a simple configuration file:
 
-```json
+```js
 {
     assets: {
         source: __dirname + '/public',
@@ -62,13 +62,13 @@ Strings. Strings are syntactic sugar for an object like this: `{ file: '/the/str
 
 ```json
 {
-    file: '/js/app.js',
-    glob: '/js/service/*.js',
-    inline: false,
-    src: 'alert("foo");',
-    ext: '//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js',
-    test: 'window.jQuery'
-    profile: 'owner'
+    "file": "/js/app.js",
+    "glob": "/js/service/*.js",
+    "inline": false,
+    "src": "alert('foo');",
+    "ext": "//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js",
+    "test": "window.jQuery"
+    "profile": "owner"
 }
 ```
 
@@ -76,7 +76,7 @@ We obviously shouldn't be setting all these properties at once, let's go over th
 
 ### #Asset.file
 
-The path to the asset, relative to `assets.bin`. This path can contain `..` jumps to parent directories.
+The path to the asset, relative to `assets.bin`. This path can contain `..` jumps to parent directories. `assetify` concedes that the order you output your assets in is important, and it will respect the order you define for your assets to be exposed.
 
 ### #Asset.glob
 
@@ -180,7 +180,7 @@ By default, images in the `source` directory won't be forwarded to the compilati
 
 ```json
 {
-    extnames: ['.ico', '.png', '.gif', '.jpg', '.jpeg']
+    "extnames": [".ico", ".png", ".gif", ".jpg", ".jpeg"]
 }
 ```
 
@@ -238,11 +238,34 @@ assetify(app, express, bin);
 
 We're basically passing assetify three things: the `app`, so that we can tack a middleware onto it; `express`, so we know how to use a few more configuration options, and `bin`, which is the same `bin` as the one we used in the compilation step.
 
+Your middleware won't do much. It will, however, set up a local variable in your `res` objects, called `assetify`. This object will have a **very small API`**.
+
+### #assetify.css.emit(profile)
+
+This will emit all the CSS style tags you need in your view, in the order you chose, and using the assets that have been previously compiled through `assetify`. The `profile` can be omitted.
+
+In a Jade view:
+
+```jade
+html
+  head
+    !=assetify.css.emit()
+
+  body
+    p Awesome!
+```
+
+### #assetify.css.add(code, before)
+
+Dynamically adding assets to particular requests is supported. The code will be inlined in the appropriate asset tag in the response. If `before` is true, then the asset will be added before any statically compiled assets, rather than last.
+
+This API is repeated for JavaScript assets, in `assetify.js`.
+
 The crucial take-away here is that we can compile and serve in two completely separate steps, and it would still work. This enables us to compile using [**grunt-assetify**](https://github.com/bevacqua/grunt-assetify "grunt-assetify task") in a `grunt` task, and then run our app just doing `node app`.
 
-Why pass `express`? Well, there are actually a few more options we can use with `assetify`. These should also be passed to the options we've described at the beginning.
+Why are we passing `express` to create this middleware? Well, there are actually a few more options we can use with `assetify`. These should also be passed to the options we've described at the beginning.
 
-```json
+```js
 {
     compress: true,
     fingerprint: true,
