@@ -240,6 +240,8 @@ We're basically passing assetify three things: the `app`, so that we can tack a 
 
 Your middleware won't do much. It will, however, set up a local variable in your `res` objects, called `assetify`. This object will have a **very small API**.
 
+Alternatively, if you don't want to have this middleware set up on every route, you can use `assetify(bin)`, instead. This will load the serialized data needed to make the plugin run. After that, you can load up the middleware only in the routes where you need it, using `app.use(assetify.middleware)`. This will expose the API for each particular request.
+
 ### # assetify.css.emit(profile)
 
 This will emit all the CSS style tags you need in your view, in the order you chose, and using the assets that have been previously compiled through `assetify`. The `profile` can be omitted.
