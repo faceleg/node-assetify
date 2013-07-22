@@ -268,6 +268,7 @@ Why are we passing `express` to create this middleware? Well, there are actually
 ```js
 {
     compress: true,
+    serve: true,
     fingerprint: true,
     expires: /^\/img\//i,
     explicit: false,
@@ -288,9 +289,15 @@ Whether to use the `connect.compress()` middleware.
 
 If this is enabled, then we're going to use [static-asset](https://github.com/bminer/node-static-asset) to produce fingerprints for our assets, sending them far into the future with expires headers. These fingerprints will only be set for assets you declare explicitly, and not for forwarded assets, since image references aren't in control of assetify.
 
+##### # opts.serve
+
+This option defaults to `true`. When `serve` is disabled, static assets won't be served by assetify. We use `connect.static` to serve assets, but you might want to serve them yourself. In this case, you can disable `serve`. Note that in doing so, you'll be turning off the fingerprint option as well.
+
 ##### # opts.expires
 
-If this is set, then the regular expression provided will be used to give an `Expires` header to any matching request. The `favicon` will also receive this treatment.
+If this is set, then the regular expression provided will be used to give an `Expires` header to any matching request. The `favicon` will also receive this treatment. Note that assets registered through assetify don't need this, and fingerprint is the preferred method for serving those. However, if you've chosen to disable `serve`, then you could use this option alternatively.
+
+`expires` is intended to be used for images and any other requests that might match assets we forwarded using the `forward` plugin.
 
 ##### # opts.explicit
 
