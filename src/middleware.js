@@ -22,10 +22,10 @@ function middleware(pluginFramework, dynamics){
         });
     }
 
-    function localize(req, res, done){
+    function localize(req, res, complete){
         var localized = {};
 
-        async.forEach(agnostic, function(item, next){
+        async.forEach(agnostic, function(item, done){
             var nodes = item.path.split('.'),
                 lastNode = nodes.splice(nodes.length - 1, 1),
                 step = localized;
@@ -39,13 +39,13 @@ function middleware(pluginFramework, dynamics){
             
             item.callback(req, res, function(err, result){
                 if(err){
-                    return next(err);
+                    return done(err);
                 }
                 step[lastNode] = result;
-                next();
+                done();
             });
         }, function(err){
-            done(err, localized);
+            complete(err, localized);
         });
     }
 
@@ -66,12 +66,21 @@ function middleware(pluginFramework, dynamics){
     }
 
     function configure(server, connect, bin){
+        if(typeof server === 'string'){
+            bin = server;
+        }
+
         var data = meta.deserialize(bin),
             roots = data.assets.roots || [];
 
         process.stdout.write('Registering assets with middleware...');
 
         unwrap(data);
+
+        if(server === bin){
+            process.stdout.write('done\n');
+            return;
+        }
 
         if(data.compress){
             server.use(connect.compress());
@@ -100,18 +109,21 @@ function middleware(pluginFramework, dynamics){
             });
         }
 
-        server.use(function(req,res,next){
-            localize(req, res, function(err, localized){
-                if(err){
-                    return next(err);
-                }
-                
-                res.locals.assetify = localized;
-                next();
-            });
-        });
+        server.use(expose);
 
         process.stdout.write('done\n');
+    }
+
+    function expose(req,res,next){
+        localize(req, res, function(err, localized){
+            if(err){
+                return next(err);
+            }
+            
+            res.locals.assetify = localized;
+            
+        });
+        next();
     }
 
     function unwrap(data){
@@ -140,6 +152,7 @@ function middleware(pluginFramework, dynamics){
         get _length(){ return agnostic.length; },
         register: register,
         configure: configure,
+        expose: expose,
         meta: meta
     };
 }

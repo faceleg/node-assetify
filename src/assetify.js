@@ -8,6 +8,7 @@ module.exports = {
             api = {
                 compile: require('./compiler.js').instance(middleware, pluginFramework, dynamics),
                 use: pluginFramework.register,
+                middleware: middleware.expose,
                 plugins: require('./plugins/all.js'),
                 jQuery: require('./jquery.js')
             },
