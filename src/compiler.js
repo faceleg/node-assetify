@@ -32,11 +32,11 @@ function compiler(middleware, pluginFramework){
         }
     }
 
-    function anonymousSnippet(){
-        return '/snippet_' + (++snippets) + '.js';
+    function anonymousSnippet(key){
+        return '/snippet_' + (++snippets) + '.' + key;
     }
 
-    function readFilesAsync(items, done){
+    function readFilesAsync(items, key, done){
         async.forEach(items, function(source, callback){
             var complex = typeof source === 'object',
                 item = complex ? source : {
@@ -57,7 +57,7 @@ function compiler(middleware, pluginFramework){
             items[i] = item;
 
             if (item.inline !== true && (item.file || !item.ext)){
-                item.out = item.file || anonymousSnippet();
+                item.out = item.file || anonymousSnippet(key);
             }
 
             if(item.file !== undefined && item.src === undefined){ // file might not exist.
@@ -95,7 +95,7 @@ function compiler(middleware, pluginFramework){
         var ctx = { key: key };
 
         async.series([
-            async.apply(readFilesAsync, items),
+            async.apply(readFilesAsync, items, key),
             async.apply(pluginFramework.raise, key, 'afterReadFile', items, config, ctx),
             async.apply(pluginFramework.raise, key, 'beforeBundle', items, config, ctx),
             async.apply(pluginFramework.raise, key, 'afterBundle', items, config, ctx),
