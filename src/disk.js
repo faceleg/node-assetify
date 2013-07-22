@@ -37,13 +37,13 @@ function remove(path, cb){
 var rback = /(\.\.[\/\\])/g;
 var rexplicit = /^[a-z0-9_-]{1,8}$/i;
 
+// trim ../ from relative path, avoid assets outside bin folder
 function parentless(relative){
-    // trim ../ from relative path, avoid assets outside bin folder   
-    var parentless = relative.replace(rback, '');
+    return relative.replace(rback, '');
 }
 
 function optionExplicit(file, explicit){
-    if(!explicit){
+    if(!file || !explicit){
         return file;
     }
     if (explicit === true){
