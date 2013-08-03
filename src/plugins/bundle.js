@@ -10,6 +10,18 @@ module.exports = {
             if (config.profiles === undefined){
                 config.profiles = ['all'];
             }
+
+            items.forEach(function(item) {
+                if (!(item.profile instanceof Array)) {
+                    return;
+                }
+                item.profile.forEach(function(profile) {
+                  if (config.profiles.indexOf(profile) === -1) {
+                      config.profiles = config.profiles.concat(item.profile);
+                  }
+                });
+            });
+
             var bundles = [];
 
             return async.forEach(config.profiles, function(profile, done){
@@ -52,4 +64,4 @@ module.exports = {
             });
         }
     }]
-};
+};
