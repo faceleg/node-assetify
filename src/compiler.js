@@ -6,6 +6,7 @@ function compiler(middleware, pluginFramework){
         path = require('path'),
         async = require('async'),
         disk = require('./disk.js'),
+        collector = require('./collector.js'),
         defaults = {
             js: [],
             css: [],
@@ -30,6 +31,9 @@ function compiler(middleware, pluginFramework){
         if(config.source === config.bin && !config.explicit){
             throw new Error("opts.source can't be the same as opts.bin unless opts.explicit is enabled");
         }
+
+        config.js = config.js.concat(collector.assets().js);
+        config.css = config.css.concat(collector.assets().css);
 
         config.binAssets = config.explicit ? config.bin : path.join(config.bin, 'assets');
     }
@@ -122,7 +126,7 @@ function compiler(middleware, pluginFramework){
                 return complete(err);
             }
 
-            middleware.meta.pushAsset(key, items);            
+            middleware.meta.pushAsset(key, items);
 
             complete();
         });
@@ -162,4 +166,4 @@ function compiler(middleware, pluginFramework){
 
 module.exports = {
     instance: compiler
-};
+};
