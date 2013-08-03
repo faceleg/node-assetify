@@ -9,6 +9,7 @@ module.exports = {
                 compile: require('./compiler.js').instance(middleware, pluginFramework, dynamics),
                 use: pluginFramework.register,
                 middleware: middleware.expose,
+                addFiles: require('./collector.js').add,
                 plugins: require('./plugins/all.js'),
                 jQuery: require('./jquery.js')
             },
