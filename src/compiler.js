@@ -31,8 +31,8 @@ function compiler(middleware, pluginFramework, collector){
             throw new Error("opts.source can't be the same as opts.bin unless opts.explicit is enabled");
         }
 
-        config.js = config.js.concat(collector.assets().js);
-        config.css = config.css.concat(collector.assets().css);
+        config.js = config.js.concat(collector.assets.js);
+        config.css = config.css.concat(collector.assets.css);
 
         config.binAssets = config.explicit ? config.bin : path.join(config.bin, 'assets');
     }
