@@ -221,7 +221,7 @@ This step is special in that it runs whenever asset HTML tags are going to be em
 
 ## Adding assets before compilation
 
-Often you'll want to add assets in different places in your program - for example if you had a large site that consisted of multiple modules, you may want to allow each module to add their own assets, instead the main module being responsible for its submodule's assets.
+Often you'll want to add assets in different places in your program - for example if you had a large site that consisted of multiple modules, you may want to allow each module to add their own assets, instead of the main module being responsible for its submodule's assets.
 
 This behaviour can be acheived through the use of `assetify.addFiles()`.
 
