@@ -68,12 +68,26 @@ function compiler(middleware, pluginFramework, collector){
             if(item.file !== undefined && item.src === undefined){ // file might not exist.
                 var file = path.join(config.source, item.file);
 
-                fs.readFile(file, 'utf8', function(err, data){
-                    if(err){
-                        return callback(err);
-                    }
-                    item.src = data;
-                    callback();
+                var readFile = function(filePath, callback) {
+                    fs.readFile(filePath, 'utf8', function(err, data){
+                        if(err){
+                            return callback(err);
+                        }
+                        item.src = data;
+                        callback();
+                    });
+                };
+                fs.exists(file, function(exists) {
+                  if (exists) {
+                    readFile(file, callback);
+                  } else {
+                    fs.exists(item.file, function(exists) {
+                        if (!exists) {
+                            return callback(new Error('File does not exist at either "' + file + '" or "' + item.file + '"'));
+                        }
+                        readFile(item.file, callback);
+                    });
+                  }
                 });
             }else{
                 if (item.src === undefined){
