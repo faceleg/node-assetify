@@ -5,11 +5,12 @@ module.exports = {
         var pluginFramework = require('./plugins/framework.js').instance(),
             dynamics = require('./dynamic.js').instance(),
             middleware = require('./middleware.js').instance(pluginFramework, dynamics),
+            collector = require('./collector.js')(),
             api = {
-                compile: require('./compiler.js').instance(middleware, pluginFramework, dynamics),
+                compile: require('./compiler.js').instance(middleware, pluginFramework, collector),
                 use: pluginFramework.register,
                 middleware: middleware.expose,
-                addFiles: require('./collector.js').add,
+                addFiles: collector.add,
                 plugins: require('./plugins/all.js'),
                 jQuery: require('./jquery.js')
             },
