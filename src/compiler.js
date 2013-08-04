@@ -1,12 +1,11 @@
 'use strict';
 
-function compiler(middleware, pluginFramework){
+function compiler(middleware, pluginFramework, collector){
     var extend = require('xtend'),
         fs = require('fs'),
         path = require('path'),
         async = require('async'),
         disk = require('./disk.js'),
-        collector = require('./collector.js'),
         defaults = {
             js: [],
             css: [],
@@ -166,4 +165,4 @@ function compiler(middleware, pluginFramework){
 
 module.exports = {
     instance: compiler
-};
+};
