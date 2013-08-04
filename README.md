@@ -219,6 +219,52 @@ The `'afterOutput'` step is here in case we want to run any plugins after the ou
 
 This step is special in that it runs whenever asset HTML tags are going to be emitted, typically before an incoming request is going to render them. This step is used by an special plugin I'll describe in short.
 
+## Adding assets before compilation
+
+Often you'll want to add assets in different places in your program - for example if you had a large site that consisted of multiple modules, you may want to allow each module to add their own assets, instead of having the main module being responsible for its submodule's assets.
+
+This behaviour can be acheived through the use of `assetify.addFiles()`.
+
+Assuming the same `assetify` instance, the following two blocks are equivalent:
+
+```js
+var assetify = require('assetify').instance();
+
+assetify.addFiles({
+    css: [ '/stylesheets/style.css' ]
+});
+
+assetify.addFiles({
+    js: [ '/javascript/directives/ui-bootstrap-tpls-0.4.0.js' ]
+});
+
+assetify.use(assetify.plugins.bundle);
+assetify.compile({
+    assets: {
+        source: path.join(rootDirectory, 'public'),
+        bin: path.join(rootDirectory, 'public', '.bin')
+    }
+}, function(error) {
+    callback(error, app, rootDirectory);
+});
+```
+
+```js
+var assetify = require('assetify').instance();
+
+assetify.use(assetify.plugins.bundle);
+assetify.compile({
+    assets: {
+        css: [ '/stylesheets/style.css' ],
+        js: [ '/javascript/directives/ui-bootstrap-tpls-0.4.0.js' ]
+        source: path.join(rootDirectory, 'public'),
+        bin: path.join(rootDirectory, 'public', '.bin')
+    }
+}, function(error) {
+    callback(error, app, rootDirectory);
+});
+```
+
 # Connect Middleware
 
 > The second piece of the assetify puzzle is serving the assets, to facilitate this, we've provided a middleware you can tack onto `connect` (or `express`), very easily.
