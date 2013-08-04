@@ -6,6 +6,13 @@
     "email": "nicolasbevacqua@gmail.com",
     "url": "http://www.ponyfoo.com"
   },
+  "contributors": [
+    {
+      "name": "Michael Robinson",
+      "email": "mike@pagesofinterest.net",
+      "url": "http://pagesofinterest.net"
+    }
+  ],
   "version": "0.8.5",
   "dependencies": {
     "async": "0.2.8",
@@ -35,25 +42,24 @@
     "url": "https://github.com/bevacqua/node-assetify/issues"
   },
   "keywords": [
-    "asset",
-    "assets",
-    "asset-manager",
-    "asset-management",
-    "static",
-    "static-assets",
-    "minification",
-    "minifier",
-    "minify",
-    "bundling",
-    "bundler",
-    "concat",
-    "concatenate",
-    "build",
-    "compile",
-    "browser"
+      "asset",
+      "assets",
+      "asset-manager",
+      "asset-management",
+      "static",
+      "static-assets",
+      "minification",
+      "minifier",
+      "minify",
+      "bundling",
+      "bundler",
+      "concat",
+      "concatenate",
+      "build",
+      "compile",
+      "browser"
   ],
-  "licenses": [
-    {
+  "licenses": [{
       "type": "MIT"
     }
   ],
