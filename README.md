@@ -46,7 +46,9 @@ Let me explain these properties.
 
 ### # assets.source
 
-The `source` directory is the base directory where your static assets are. Don't worry, assetify supports referencing assets outside of this directory, but it will be used as the base directory for relatively referenced assets.
+The `source` directory is the base directory where your static assets are. 
+Don't worry, assetify supports referencing assets outside of this directory, but it will be used as the base directory 
+for relatively referenced assets.
 
 ### # assets.bin
 
@@ -76,7 +78,11 @@ We obviously shouldn't be setting all these properties at once, let's go over th
 
 ### # Asset.file
 
-The path to the asset, relative to `assets.bin`. This path can contain `..` jumps to parent directories. `assetify` concedes that the order you output your assets in is important, and it will respect the order you define for your assets to be exposed.
+The path to the asset, relative to `assets.bin`. This path can contain `..` jumps to parent directories. 
+To specify files outside the `source` directory more conveniently, simply specify the `file` value as an absolute path. `assetify` will attempt to 
+located the file as if it were relative to `source`, when that fails it will assume the `file` value is absolute.
+`assetify` concedes that the order you output your assets in is important, and it will respect the order you 
+define for your assets to be exposed.
 
 ### # Asset.glob
 

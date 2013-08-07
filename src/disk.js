@@ -42,6 +42,30 @@ function parentless(relative){
     return relative.replace(rback, '');
 }
 
+var binComponent = null;
+
+/**
+ * Calculate difference between source and bin paths, prepend difference to file path.
+ *
+ * @param {String} file Public path to asset.
+ * @param {String} source Source directory for core assets.
+ * @param {String} bin Compile path for all assets.
+ * @return {String} The modified public asset path.
+ */
+function binPath(file, source, bin) {
+  if (binComponent == null) {
+      var i = 0;
+      while(source.charAt(i) === bin.charAt(i)){
+        i++;
+      }
+      binComponent = bin.substring(i);
+  }
+  if (binComponent) {
+    file = binComponent + file;
+  }
+  return file;
+}
+
 function optionExplicit(file, explicit){
     if(!file || !explicit){
         return file;
@@ -64,5 +88,6 @@ module.exports = {
     write: write,
     removeSafe: remove,
     parentless: parentless,
+    binPath: binPath,
     optionExplicit: optionExplicit
 };

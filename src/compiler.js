@@ -105,6 +105,7 @@ function compiler(middleware, pluginFramework, collector){
             if(item.inline !== true && (item.file || !item.ext)){ // don't write files for inline scripts
                 item.out = disk.parentless(item.out);
                 item.out = disk.optionExplicit(item.out, config.explicit);
+                item.out = disk.binPath(item.out, config.source, config.bin);
                 file = path.join(config.binAssets, item.out);
                 disk.write(file, item.src, done);
             }else{
