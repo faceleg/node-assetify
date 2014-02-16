@@ -53,6 +53,9 @@ var binComponent = null;
  * @return {String} The modified public asset path.
  */
 function binPath(file, source, bin) {
+  if (source === bin) {
+    return file;
+  }
   if (binComponent == null) {
       var i = 0;
       while(source.charAt(i) === bin.charAt(i)){
