@@ -25,7 +25,8 @@
     "static-asset": "~0.5.2",
     "uglify-js": "2.3.5",
     "walk": "2.2.1",
-    "xtend": "2.0.4"
+    "xtend": "2.0.4",
+    "assetify-parser": "latest"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
