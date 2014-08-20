@@ -2,7 +2,7 @@
 
 var path = require('path'),
     less = require('less'),
-    parser = require('./parser.js');
+    parser = require('assetify-parser');
 
 module.exports = parser.configure('css', ['.less'], function(item, config, ctx, done){
     var filename = path.join(config.source, item.file),
